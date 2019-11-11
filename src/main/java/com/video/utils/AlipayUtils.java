@@ -1,4 +1,5 @@
 package com.video.utils;
+/*
 
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
@@ -33,4 +34,4 @@ public class AlipayUtils {
         form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单        System.out.println(response.getBody());
         return form;
     }
-}
+}*/

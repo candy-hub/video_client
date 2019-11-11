@@ -15,7 +15,6 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableAutoConfiguration
 public class RedisCacheConfig extends CachingConfigurerSupport {
 
     @Value("${spring.redis.host}")
@@ -23,9 +22,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
 
     @Value("${spring.redis.port}")
     private int port;
-
-    @Value("${spring.redis.timeout}")
-    private int timeout;
 
     @Value("${spring.redis.database}")
     private int database;
@@ -39,7 +35,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         JedisConnectionFactory factory = new JedisConnectionFactory();
         factory.setHostName(host);
         factory.setPort(port);
-        factory.setTimeout(timeout);
         factory.setDatabase(database);
         return factory;
     }
