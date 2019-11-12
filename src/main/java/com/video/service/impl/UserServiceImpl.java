@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
     * 用户界面
     */
 
-
     /*判断用户名是否存在*/
     @Override
     public String findByRegisterName(User user) {
@@ -95,6 +94,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.saveAndFlush(user);
     }
 
+    @Override
+    public void userRecharge(User user) {
+        userRepository.findById(user.getUserId());
+    }
+
+    @Override
+    public User findAllByUserRechargeOrderNumber(String userRechargeOrderNumber) {
+        return userRepository.findAllByUserRechargeOrderNumber(userRechargeOrderNumber);
+    }
+
     /*
      * 管理人员界面
      */
@@ -120,4 +129,6 @@ public class UserServiceImpl implements UserService {
         user.setUserStatue(1);
         userRepository.saveAndFlush(user);
     }
+
+
 }

@@ -30,7 +30,6 @@ public class User {
     @Column(name = "idx_user_password")
     private String userPassword;//用户密码
 
-
     @Column(name = "idx_user_money")
     private BigDecimal userMoney;//用户账户余额
 
@@ -51,7 +50,7 @@ public class User {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date userUptime;//用户注册时间
 
-    @Column(name = "idx_user_info")
-    private Integer userInfo;//用户信息
+    @Column(name = "idx_user_recharge")
+    private String userRechargeOrderNumber;//用户充值订单编号
     
 }
