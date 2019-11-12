@@ -8,5 +8,11 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User,Integer> {
 
+    /*
+     * 用户界面
+     */
+
     List<User> findAllByUserTellOrUserEmailOrUserName(String userName, String userEmail, String userTell);
+
+
 }

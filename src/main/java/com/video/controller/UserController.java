@@ -5,6 +5,7 @@ import com.video.domain.User;
 import com.video.service.UserService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +17,6 @@ import java.util.Objects;
 public class UserController {
 
     @Resource
-    UserRepository userRepository;
-
-    @Resource
     UserService userService;
 
     @Resource
@@ -26,6 +24,10 @@ public class UserController {
 
     @Resource
     EmailUtils emailUtils;
+
+    /*
+    * 用户界面
+    */
 
     /*注册*/
     @RequestMapping(value = "/userRegister",method = RequestMethod.POST)
@@ -45,7 +47,7 @@ public class UserController {
     }
 
     /*邮箱激活成功之后的回调*/
-    @RequestMapping(value = "sendMail/{userId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/sendMail/{userId}",method = RequestMethod.GET)
     public String updateStatus(@PathVariable("userId")Integer userId){
         User user = userService.findByUserId(userId);
         user.setUserStatue(1);
@@ -77,52 +79,33 @@ public class UserController {
         }
     }
 
+    /*修改用户信息*/
     @RequestMapping(value = "/updateUser",method = RequestMethod.POST)
     public User updateUser(@RequestBody User user){
         return userService.updateUser(user);
     }
 
+    /*
+     * 管理人员界面
+     */
 
-
-
-
- /* @RequestMapping(value = "/checkUser",method = RequestMethod.POST)
-    public List<User> checkUser(@RequestBody User user){
-        return userRepository.findAllByUserTellOrUserEmailOrUserName(user.getUserTell(),user.getUserEmail(),user.getUserName());
-    }*/
-
-   /* @RequestMapping(value = "/findAllUsers",method = RequestMethod.GET)
-    public List<User> findAllUsers(){
-        return userRepository.findAll();
+    /*用户信息展示*/
+    @RequestMapping(value = "findAllUser",method = RequestMethod.POST)
+    public List<User> findAllUser(){
+        return userService.findAllUser();
     }
 
-
-
-
-
-
-
-
-
-
-
-    @RequestMapping(value = "/findUserByName/{uname}",method = RequestMethod.POST)
-    public User findByName(@PathVariable String userName){
-        return userService.findByName(userName);
+    /*重置用户密码*/
+    @RequestMapping(value = "/resetPassword",method = RequestMethod.GET)
+    public String resetPassword(@RequestParam Integer userId){
+        userService.resetPassword(userId);
+        return "重置成功";
     }
 
-
-
-    @RequestMapping(value = "/updatePassword",method = RequestMethod.POST)
-    public String updatePassword(@RequestBody User user){
-        return userService.updatePassword(user);
+    /*修改用户状态*/
+    @RequestMapping(value = "/updateUserStatue",method = RequestMethod.GET)
+    public String updateUserStatue(@RequestParam Integer userId){
+        userService.updateUserStatue(userId);
+        return "修改成功";
     }
-
-    @RequestMapping(value = "/findUserByUid/{uId}",method = RequestMethod.POST)
-    public User findByUId(@PathVariable("uId") int uId){
-        return userService.findByUId(uId);
-    }
-
-    *//*小图上传*//*
-    */
 }

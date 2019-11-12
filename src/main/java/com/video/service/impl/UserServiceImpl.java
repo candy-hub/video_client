@@ -21,6 +21,10 @@ public class UserServiceImpl implements UserService {
     @Resource
     Md5Utils md5Utils;
 
+    /*
+    * 用户界面
+    */
+
 
     /*判断用户名是否存在*/
     @Override
@@ -89,5 +93,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUser(User user) {
         return userRepository.saveAndFlush(user);
+    }
+
+    /*
+     * 管理人员界面
+     */
+
+    /*用户信息展示*/
+    @Override
+    public List<User> findAllUser() {
+        return userRepository.findAll();
+    }
+
+    /*重置用户密码*/
+    @Override
+    public void resetPassword(Integer userId) {
+        User user = userRepository.findById(userId).get();
+        user.setUserPassword("123456");
+        userRepository.saveAndFlush(user);
+    }
+
+    /*修改用户状态*/
+    @Override
+    public void updateUserStatue(Integer userId) {
+        User user = userRepository.findById(userId).get();
+        user.setUserStatue(1);
+        userRepository.saveAndFlush(user);
     }
 }
