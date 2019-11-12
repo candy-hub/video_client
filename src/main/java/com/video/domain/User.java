@@ -27,6 +27,10 @@ public class User {
     @Column(name = "uk_user_tell")
     private String userTell;//用户电话
 
+    @Column(name = "idx_user_password")
+    private String userPassword;//用户密码
+
+
     @Column(name = "idx_user_money")
     private BigDecimal userMoney;//用户账户余额
 

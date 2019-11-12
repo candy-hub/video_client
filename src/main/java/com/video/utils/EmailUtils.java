@@ -12,7 +12,7 @@ public class EmailUtils {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
-    public void sendMail(Integer id){
-        rabbitTemplate.convertAndSend("topicExchange","topic.me",id);
+    public void sendMail(Integer userId){
+        rabbitTemplate.convertAndSend("topicExchange","topic.me",userId);
     }
 }
