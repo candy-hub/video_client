@@ -32,4 +32,7 @@ public class Comment {
     @Column(name = "idx_comment_statue")
     private Integer commentStatue;//评论状态
 
+    @Column(name = "idx_comment_rid")
+    private Integer commentRid;//0：评论的是剧集   其他数字与commentId匹配，1：该评论是commentId==1 的评论
+
 }
