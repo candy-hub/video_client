@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.net.URL;
+import java.util.Date;
 
 
 @Component
@@ -21,7 +23,7 @@ public class OssUploadUtils {
     public String upLoad(File file) throws Throwable {
         logger.info("------OSS文件上传开始--------"+ logger.getName());
         String endpoint=constantConfig.getLXIMAGE_END_POINT();
-        System.out.println("获取到的Point为:"+endpoint);
+        //System.out.println("获取到的Point为:"+endpoint);
         String accessKeyId=constantConfig.getLXIMAGE_ACCESS_KEY_ID();
         String accessKeySecret=constantConfig.getLXIMAGE_ACCESS_KEY_SECRET();
         String bucketName=constantConfig.getLXIMAGE_BUCKET_NAME();
@@ -47,10 +49,10 @@ public class OssUploadUtils {
                 client.createBucket(createBucketRequest);
             }
             //设置文件路径和名称
-            String fileUrl =filePath+"-"+file.getName();
+           // String fileUrl =filePath+"-"+file.getName();
             //断点续传
             //通过UploadFileRequest设置多个参数
-            UploadFileRequest uploadFileRequest = new UploadFileRequest(bucketName,fileUrl);
+            UploadFileRequest uploadFileRequest = new UploadFileRequest(bucketName,file.getName());
             // 指定上传的本地文件。
             uploadFileRequest.setUploadFile(file.getPath());
             // 指定上传并发线程数，默认为1。
@@ -69,13 +71,21 @@ public class OssUploadUtils {
             client.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
             if (result != null) {
                 logger.info("------OSS文件上传成功------" + file.getName());
+                //获得oss视频的外链
+                // 设置URL过期时间为10年  3600l* 1000*24*365*10
+                Date expiration = new Date(new Date().getTime() + 3600l * 1000 * 24 * 365 * 10);
+                // 生成URL
+                URL url = client.generatePresignedUrl(bucketName, file.getName(), expiration);
+                return url.toString();
+             }else {
+                return "0";
             }
         }catch (Exception e){
             logger.info(e.getMessage());
         }finally {
             client.shutdown();
         }
-        return "1";
+        return null;
         }
 
 }

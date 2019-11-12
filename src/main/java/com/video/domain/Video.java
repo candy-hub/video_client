@@ -61,4 +61,7 @@ public class Video {
 
     @Column(name = "idx_video_statue")
     private Integer videoStatue;//视频状态
+
+    @Column(name="idx_video_objectname")
+    private String videoObjectName;//上传下载专用，勿删
 }
