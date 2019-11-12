@@ -33,6 +33,8 @@ public class ConstantConfig {
     private  String LXIMAGE_FILE_PATH;
     @Value("${lximage.bucketname}")
     private  String LXIMAGE_BUCKET_NAME;
+    @Value("${lximage.url}")
+    private String LXIMAGE_URL;
 
     @Value("${spring.server.MaxFileSize}")
     private String MaxFileSize;
