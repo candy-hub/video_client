@@ -21,7 +21,7 @@ public class OssUploadUtils {
 
     //文件上传
     public String upLoad(File file) throws Throwable {
-        logger.info("------OSS文件上传开始--------"+ logger.getName());
+        logger.info("------OSS文件上传开始--------"+ file.getName());
         String endpoint=constantConfig.getLXIMAGE_END_POINT();
         //System.out.println("获取到的Point为:"+endpoint);
         String accessKeyId=constantConfig.getLXIMAGE_ACCESS_KEY_ID();
@@ -42,12 +42,12 @@ public class OssUploadUtils {
         meta.setContentType("text/plain");
         try{
             // 判断容器是否存在,不存在就创建
-            if (!client.doesBucketExist(bucketName)) {
+           /* if (!client.doesBucketExist(bucketName)) {
                 client.createBucket(bucketName);
                 CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
                 createBucketRequest.setCannedACL(CannedAccessControlList.PublicRead);
                 client.createBucket(createBucketRequest);
-            }
+            }*/
             //设置文件路径和名称
            // String fileUrl =filePath+"-"+file.getName();
             //断点续传
@@ -68,7 +68,7 @@ public class OssUploadUtils {
             // 断点续传上传。
             UploadFileResult result = client.uploadFile(uploadFileRequest);
             // 设置权限(公开读)
-            client.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
+           // client.setBucketAcl(bucketName, CannedAccessControlList.PublicRead);
             if (result != null) {
                 logger.info("------OSS文件上传成功------" + file.getName());
                 //获得oss视频的外链
