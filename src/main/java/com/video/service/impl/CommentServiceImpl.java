@@ -6,6 +6,8 @@ import com.video.service.CommentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,8 +22,22 @@ public class CommentServiceImpl implements CommentService {
 
         List<Comment> all = commentRepository.findAll();
 
+        List<Comment> list=new ArrayList<>();
+
         if (all!=null){
-            return all;
+            for (Comment comment:all){
+                if (comment.getCommentRid()==0){
+                    list.add(comment);
+                    System.out.println(comment);
+                    for (Comment com:all) {
+                        if (comment.getCommentId() == com.getCommentRid() && comment.getCommentId()!=com.getCommentId()) {
+                            System.out.println(com);
+                            list.add(com);
+                        }
+                    }
+                }
+            }
+            return list;
         }else {
             return null;
         }
@@ -29,6 +45,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment save(Comment comment) {
+        comment.setCommentTime(new Date());
         if (comment!=null){
             return commentRepository.save(comment);
         }else {

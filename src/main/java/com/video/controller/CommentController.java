@@ -35,7 +35,7 @@ public class CommentController {
     }
 
     /*举报*/
-    @RequestMapping("/uodateComment/{commentId}")
+    @RequestMapping("/updateComment/{commentId}")
     public Comment update(@PathVariable("commentId") int commentId){
         return commentService.update(commentId);
     }
