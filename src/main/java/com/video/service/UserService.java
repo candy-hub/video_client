@@ -2,6 +2,7 @@ package com.video.service;
 
 import com.video.domain.User;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserService {
@@ -16,13 +17,17 @@ public interface UserService {
 
     User findByUserId(Integer userId);//通过id查找对象
 
-    User update(User users);//邮箱激活后改变修改用户状态
+    User update(User user );//邮箱激活后改变修改用户状态
 
     String login(String loginName,String password);//登录
 
     User findById(Integer userId);//通过用户id查用户对象
 
     User updateUser(User user);//用户完善个人信息
+
+    void userRecharge(User user);//用户充值
+
+    User findAllByUserRechargeOrderNumber(String userRechargeOrderNumber);//通过订单编号查对象
 
     /*
      * 管理人员界面
@@ -32,4 +37,5 @@ public interface UserService {
     void resetPassword(Integer userId);//重置用户密码
 
     void updateUserStatue(Integer userId);//修改用户的状态码
+
 }
