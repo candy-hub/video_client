@@ -1,6 +1,7 @@
 package com.video.service.impl;
 
 import com.video.dao.CommentRepository;
+import com.video.domain.Barrage;
 import com.video.domain.Comment;
 import com.video.service.CommentService;
 import org.springframework.stereotype.Service;
@@ -73,5 +74,15 @@ public class CommentServiceImpl implements CommentService {
         }else {
             return null;
         }
+    }
+
+    @Override
+    public List<Comment> findAllByStatue(int commentStatue) {
+        return commentRepository.findAllByCommentStatue(commentStatue);
+    }
+
+    @Override
+    public Comment updateStatue(Comment comment) {
+        return commentRepository.save(comment);
     }
 }

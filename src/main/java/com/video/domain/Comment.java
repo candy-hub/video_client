@@ -18,8 +18,8 @@ public class Comment {
     @Column(name = "pk_video_id")
     private Integer videoId;//视频id
 
-    @Column(name = "pk_episode_id")
-    private Integer episodeId;//剧集id
+   /* @Column(name = "pk_episode_id")
+    private Integer episodeId;//剧集id*/
 
     @Column(name = "idx_user_name")
     private String userName;//用户名
