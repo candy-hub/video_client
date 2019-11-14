@@ -3,12 +3,14 @@ package com.video.service.impl;
 
 import com.video.dao.UserRepository;
 import com.video.domain.User;
+import com.video.response.LoginResponse;
 import com.video.service.UserService;
 import com.video.utils.Md5Utils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +47,7 @@ public class UserServiceImpl implements UserService {
         user.setUserStatue(0);
         BigDecimal money=new BigDecimal(0);
         user.setUserMoney(money);
+        user.setUserUptime(new Date());
         return userRepository.save(user);
     }
 
@@ -62,13 +65,13 @@ public class UserServiceImpl implements UserService {
 
     /*登录*/
     @Override
-    public String login(String loginName,String password) {
+    public String login(LoginResponse loginResponse) {
         //登录时进行MD5加密
-        List<User> all = userRepository.findAllByUserTellOrUserEmailOrUserName(loginName, loginName, loginName);
+        List<User> all = userRepository.findAllByUserTellOrUserEmailOrUserName(loginResponse.getLoginName(), loginResponse.getLoginName(), loginResponse.getLoginName());
         if(all.size()==0){
             return "用户名不存在";
         }else if (all.size()==1) {
-            String pass= md5Utils.getPassword(all.get(0).getUserName(), password);
+            String pass= md5Utils.getPassword(all.get(0).getUserName(), loginResponse.getPassword());
             if (all.get(0).getUserStatue()==1){
                 if (all.get(0).getUserPassword().equals(pass)) {
                     return "success";
@@ -80,6 +83,13 @@ public class UserServiceImpl implements UserService {
             return "登录失败";
         }
         return "登录失败";
+    }
+
+    /*通过登录名查用户*/
+    @Override
+    public User findUserByLoginName(String loginName) {
+        List<User> all = userRepository.findAllByUserTellOrUserEmailOrUserName(loginName, loginName, loginName);
+        return all.get(0);
     }
 
     /*通过用户id查用户对象*/

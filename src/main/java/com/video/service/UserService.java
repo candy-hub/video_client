@@ -1,6 +1,7 @@
 package com.video.service;
 
 import com.video.domain.User;
+import com.video.response.LoginResponse;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -19,11 +20,15 @@ public interface UserService {
 
     User update(User user );//邮箱激活后改变修改用户状态
 
-    String login(String loginName,String password);//登录
+    String login(LoginResponse loginResponse);//登录
+
+    User findUserByLoginName(String loginName);//通过登录名查用户
 
     User findById(Integer userId);//通过用户id查用户对象
 
     User updateUser(User user);//用户完善个人信息
+
+    //String updatePassword(String );
 
     void userRecharge(User user);//用户充值
 

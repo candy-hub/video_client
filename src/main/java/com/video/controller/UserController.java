@@ -2,6 +2,7 @@ package com.video.controller;
 
 import com.video.dao.UserRepository;
 import com.video.domain.User;
+import com.video.response.LoginResponse;
 import com.video.service.UserService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
@@ -31,16 +32,16 @@ public class UserController {
 
     /*注册*/
     @RequestMapping(value = "/userRegister",method = RequestMethod.POST)
-    public String register(@RequestBody User user,String inputCode,String builderCode){
+    public String register(@RequestBody User user){
         String msg="";
         if (userService.findByRegisterName(user)!="success"){
             msg="用户名已存在";
             return msg;
         }
-        if (!builderCode.equals(inputCode)){
+        /*if (!builderCode.equals(inputCode)){
             msg="验证码输入错误";
             return msg;
-        }
+        }*/
         User save = userService.save(user);
         emailUtils.sendMail(save.getUserId());
         return "success";
@@ -55,11 +56,17 @@ public class UserController {
         return "激活成功";
     }
 
-
      /*登录*/
     @RequestMapping(value = "/userLogin",method = RequestMethod.POST)
-    public String userLogin(@RequestParam String loginName,String password){
-        return userService.login(loginName,password);
+    public String userLogin(@RequestBody LoginResponse loginResponse){
+        System.out.println(loginResponse);
+        return userService.login(loginResponse);
+    }
+
+    /*通过用户输入的登录名查找一个对象*/
+    @RequestMapping(value = "/findUserByName/{loginName}",method = RequestMethod.POST)
+    public User findByName(@PathVariable String loginName){
+        return userService.findUserByLoginName(loginName);
     }
 
     /*用户完善修改个人信息通过id查用户*/
@@ -81,9 +88,15 @@ public class UserController {
 
     /*修改用户信息*/
     @RequestMapping(value = "/updateUser",method = RequestMethod.POST)
-    public User updateUser(@RequestBody User user){
-        return userService.updateUser(user);
+    public String updateUser(@RequestBody User user){
+        userService.updateUser(user);
+        return "success";
     }
+
+   /* @RequestMapping(value = "/updatePassword",method=RequestMethod.POST)
+    public String updatePassword(@RequestBody User user,@RequestParam String password){
+
+    }*/
 
     /*
      * 管理人员界面
