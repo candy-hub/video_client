@@ -14,9 +14,11 @@ public interface CommentService {
 
     String delete(int commentId);
 
-    Comment update(int commentId);
+//    Comment update(int commentId);
 
     List<Comment> findAllByStatue(int commentStatue);
+
+//    Comment update(Comment comment);
 
     Comment updateStatue(Comment comment);
 }
