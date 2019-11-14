@@ -24,9 +24,6 @@ public class BarrageServiceImpl implements BarrageService {
         Barrage save = barrageRepository.save(barrage);
         Integer videoId = save.getVideoId();
         List<String> list=new ArrayList<>();
-        /*
-        * video表中无episodeId字段，故，无episodeId，则一定是video表对应弹幕
-        * */
         Object o = redisTemplate.opsForHash().get(videoId + "视频弹幕", "时间：" + save.getVideoTime());
         if (o!=null) {
             list = (List<String>) o;
@@ -34,5 +31,32 @@ public class BarrageServiceImpl implements BarrageService {
         list.add(save.getBarrageContent());
         redisTemplate.opsForHash().put(videoId + "视频弹幕", "时间：" + save.getVideoTime(), list);
         return save;
+    }
+
+    @Override
+    public Barrage update(Barrage barrage) {
+        Barrage save = barrageRepository.save(barrage);
+        Integer videoId = save.getVideoId();
+        List<String> list=new ArrayList<>();
+        Integer videoTime = save.getVideoTime();
+
+        Object o = redisTemplate.opsForHash().get(videoId + "视频弹幕", "时间：" + videoTime);
+        if (o!=null) {
+            list = (List<String>) o;
+            for (String s:list) {
+                if (save.getBarrageContent().equals(s)){
+                    list.remove(s);
+                }
+            }
+        }else {
+            list.add(save.getBarrageContent());
+        }
+        redisTemplate.opsForHash().put(videoId + "视频弹幕", "时间：" + videoTime, list);
+        return save;
+    }
+
+    @Override
+    public List<Barrage> findAllByStatue() {
+        return barrageRepository.findAll();
     }
 }
