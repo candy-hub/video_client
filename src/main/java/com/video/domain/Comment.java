@@ -3,6 +3,7 @@ package com.video.domain;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Entity
@@ -35,4 +36,9 @@ public class Comment {
     @Column(name = "idx_comment_rid")
     private Integer commentRid;//0：评论的是剧集   其他数字与commentId匹配，1：该评论是commentId==1 的评论
 
+    @Column(name = "idx_comment_time")
+    private Date commentTime;  //评论时间
+
+    @Column(name = "idx_comment_count")
+    private Integer commentCount;  //点赞数
 }

@@ -5,6 +5,7 @@ import com.video.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * @Date: 2019/11/12
  * @Time: 15:24
  */
-@Controller
+@RestController
 public class TypeController {
 
     @Autowired
