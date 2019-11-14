@@ -82,8 +82,6 @@ public class WebSocketController {
 
 //        message:视频当前播放时间   nickname：视频id
 
-
-
         System.out.println("来自客户端的消息-->" + videoId + ": " + message);
 
         //从客户端传过来的数据是json数据，所以这里使用jackson进行转换为SocketMsg对象，
@@ -94,7 +92,7 @@ public class WebSocketController {
 
         try {
             socketMsg = objectMapper.readValue(message, SocketMsg.class);
-            Object o = redisTemplate.opsForHash().get(videoId+"弹幕", "时间："+socketMsg.getMsg());
+            Object o = redisTemplate.opsForHash().get(videoId+"视频弹幕", "时间："+socketMsg.getMsg());
             List<String> msgList=(List<String>)o;
 //            socketMsg.setMsg(msgList);
             if (socketMsg.getType() == 1) {

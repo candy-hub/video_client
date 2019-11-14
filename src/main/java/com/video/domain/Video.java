@@ -64,4 +64,7 @@ public class Video {
 
     @Column(name="idx_video_objectname")
     private String videoObjectName;//上传下载专用，勿删
+
+    @Column(name="idx_video_episodeid")
+    private Integer episodeId;//对应video_id，用来判断是否为剧集
 }

@@ -17,8 +17,8 @@ public class Collection {
     @Column(name = "pk_user_id")
     private Integer userId;//用户id
 
-    @Column(name = "pk_episode_id")
-    private Integer episodeId;//剧集id
+    /*@Column(name = "pk_episode_id")
+    private Integer episodeId;//剧集id*/
 
     @Column(name = "pk_video_id")
     private Integer videoId;//视频id
