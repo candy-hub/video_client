@@ -3,18 +3,31 @@ package com.video.service.impl;
 import com.video.dao.VideoRepository;
 import com.video.domain.Video;
 import com.video.service.VideoService;
+import com.video.utils.EsUtils;
 import com.video.utils.OssDownloadUtils;
 import com.video.utils.OssUploadUtils;
 import com.video.utils.QiniuUploadUtils;
+import org.elasticsearch.action.delete.DeleteRequest;
+import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -38,6 +51,12 @@ public class VideoServiceImpl implements VideoService{
 
     @Autowired
     private OssDownloadUtils ossDownloadUtils;
+
+    @Autowired
+    private EsUtils esUtils;
+
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
 
     private static String objectName;
 
@@ -77,7 +96,7 @@ public class VideoServiceImpl implements VideoService{
     }
 
     @Override
-    public String addVideo(Video video) {
+    public String addVideo(Video video) throws IOException {
         //System.out.println(objectName);
         video.setVideoLike(0);
         video.setVideoFavorite(0);
@@ -88,7 +107,18 @@ public class VideoServiceImpl implements VideoService{
         video.setVideoStatue(0);
         video.setVideoObjectName(objectName);
         video.setVideoUptime(new Date());
-        videoRepository.save(video);
+        Video save = videoRepository.save(video);
+        Map map=new HashMap();
+        map.put("pk_video_id",save.getVideoId());
+        map.put("idx_video_info",save.getVideoInfo());
+        map.put("idx_video_name",save.getVideoName());
+        map.put("idx_video_username",save.getVideoUsername());
+        map.put("idx_video_pic",video.getVideoPic());
+        map.put("idx_video_url",video.getVideoUrl());
+        IndexRequest indexRequest=new IndexRequest("video-test","doc");
+        indexRequest.id(save.getVideoId()+"");
+        IndexRequest source = indexRequest.source(map);
+        restHighLevelClient.index(source);
         return "1";
     }
 
@@ -103,8 +133,10 @@ public class VideoServiceImpl implements VideoService{
      }
 
     @Override
-    public String deleteVideo(Integer id) {
+    public String deleteVideo(Integer id) throws IOException {
         videoRepository.deleteById(id);
+        DeleteRequest deleteRequest = new DeleteRequest("items-test", "doc", id + "");
+        DeleteResponse delete = restHighLevelClient.delete(deleteRequest);
         return "1";
     }
 
@@ -122,4 +154,62 @@ public class VideoServiceImpl implements VideoService{
         }
         return "1";
     }
-}
+
+    @Override
+    public String im() throws IOException {
+        String s = esUtils.CreateIndex();
+        if (s.equals("1")) {
+            List<Video> videos = videoRepository.findAll();
+            Map map=new HashMap();
+            for(Video video:videos){
+                map.put("pk_video_id",video.getVideoId());
+                map.put("idx_video_info",video.getVideoInfo());
+                map.put("idx_video_name",video.getVideoName());
+                map.put("idx_video_username",video.getVideoUsername());
+                map.put("idx_video_pic",video.getVideoPic());
+                map.put("idx_video_url",video.getVideoUrl());
+                IndexRequest indexRequest = new IndexRequest("video-test", "doc");
+                indexRequest.id(video.getVideoId()+"");
+                IndexRequest source = indexRequest.source(map);
+                IndexResponse index = restHighLevelClient.index(source);
+                //DocWriteResponse.Result result = index.getResult();
+            }
+            return "导入成功！";
+        }
+        return "导入失败！";
+    }
+
+    @Override
+    public List<Map> search(String searchName) throws IOException {
+        //搜索请求对象
+        SearchRequest searchRequest = new SearchRequest("items-test");
+        //设置类型
+        searchRequest.types("doc");
+        //搜索源构建对象
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        if(searchName.equals("null")){
+            searchSourceBuilder.query(QueryBuilders.matchAllQuery());
+            searchRequest.source(searchSourceBuilder);
+        }else {
+            MultiMatchQueryBuilder matchQueryBuilder = QueryBuilders.multiMatchQuery(searchName);
+            searchSourceBuilder.query(matchQueryBuilder);
+            //设置搜索源
+            searchRequest.source(searchSourceBuilder);
+        }
+        SearchResponse searchResponse = restHighLevelClient.search(searchRequest);
+        SearchHits hits = searchResponse.getHits();
+        //long totalHits = hits.getTotalHits();
+        List<Map> list = new ArrayList();
+        for (SearchHit hit : hits) {
+            String id = hit.getId();
+            //源文档内容
+            Map<String, Object> sourceAsMap = hit.getSourceAsMap();
+            list.add(sourceAsMap);
+            //System.out.println(sourceAsMap);
+        }
+        return list;
+    }
+
+    }
+
+
