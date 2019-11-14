@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Objects;
 
@@ -77,10 +78,17 @@ public class VideoServiceImpl implements VideoService{
 
     @Override
     public String addVideo(Video video) {
-        System.out.println(objectName);
+        //System.out.println(objectName);
+        video.setVideoLike(0);
+        video.setVideoFavorite(0);
+        video.setVideoComment(0);
+        BigDecimal bigDecimal=new BigDecimal(0.00);
+        video.setVideoReward(bigDecimal);
+        video.setVideoDownload(0);
+        video.setVideoStatue(0);
         video.setVideoObjectName(objectName);
         video.setVideoUptime(new Date());
-       // videoRepository.save(video);
+        videoRepository.save(video);
         return "1";
     }
 
