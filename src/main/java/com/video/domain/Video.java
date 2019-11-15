@@ -60,8 +60,11 @@ public class Video {
     private Integer videoDownload;//视频下载量
 
     @Column(name = "idx_video_statue")
-    private Integer videoStatue;//视频状态
+    private Integer videoStatue;//视频状态 0 初始状态 1审核通过 2 VIP 3 禁播
 
     @Column(name="idx_video_objectname")
     private String videoObjectName;//上传下载专用，勿删
+
+    @Column(name="idx_video_episodeid")
+    private Integer episodeId;//对应video_id，用来判断是否为剧集
 }

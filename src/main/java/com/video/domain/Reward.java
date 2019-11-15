@@ -21,8 +21,8 @@ public class Reward {
     @Column(name = "pk_video_id")
     private Integer videoId;//视频id
 
-    @Column(name = "pk_episode_id")
-    private Integer episodeId;//剧集id
+   /* @Column(name = "pk_episode_id")
+    private Integer episodeId;//剧集id*/
 
     @Column(name = "idx_reward_money")
     private BigDecimal rewardContent;//打赏金额

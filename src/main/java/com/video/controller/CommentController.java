@@ -1,5 +1,6 @@
 package com.video.controller;
 
+import com.video.domain.Barrage;
 import com.video.domain.Comment;
 import com.video.service.CommentService;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,10 +35,32 @@ public class CommentController {
         return commentService.delete(commentId);
     }
 
-    /*举报*/
+   /* *//*修改*//*
+    @RequestMapping("/updateComment")
+    public Comment update(@RequestBody Comment comment){
+        return commentService.update(comment);
+    }*/
+
+   /* *//*举报*//*
     @RequestMapping("/updateComment/{commentId}")
-    public Comment update(@PathVariable("commentId") int commentId){
-        return commentService.update(commentId);
+    public Comment updateStatue(@PathVariable("commentId") int commentId){
+        return commentService.updateStatue(commentId);
+    }*/
+
+    /*
+     * 后台管理
+     */
+
+    @RequestMapping("/findAllByStatue/{commentStatue}")   ////审核：分为被举报和正常
+    public List<Comment> findAllByStatue(@PathVariable int commentStatue){
+
+        return commentService.findAllByStatue(commentStatue);
     }
+    /*举报  审核  修改*/
+    @RequestMapping("/updateComment")   //是否只被举报才审核
+    public Comment updateStatue(@RequestBody Comment comment){
+        return commentService.updateStatue(comment);
+    }
+
 
 }

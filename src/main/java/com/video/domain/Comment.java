@@ -18,8 +18,8 @@ public class Comment {
     @Column(name = "pk_video_id")
     private Integer videoId;//视频id
 
-    @Column(name = "pk_episode_id")
-    private Integer episodeId;//剧集id
+    @Column(name = "idx_user_id")
+    private Integer userId;//用户id
 
     @Column(name = "idx_user_name")
     private String userName;//用户名
@@ -35,6 +35,9 @@ public class Comment {
 
     @Column(name = "idx_comment_rid")
     private Integer commentRid;//0：评论的是剧集   其他数字与commentId匹配，1：该评论是commentId==1 的评论
+
+    @Column(name = "idx_comment_lid")
+    private Integer commentLid;//0：评论的级别  0：评论的是文章，1：评论第一级
 
     @Column(name = "idx_comment_time")
     private Date commentTime;  //评论时间
