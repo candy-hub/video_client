@@ -71,9 +71,15 @@ public class VideoController {
     }
 
     //收藏视频
-    @RequestMapping("/collection")
-    public String collection(@RequestBody Collection collection){
-        return "";
+    @RequestMapping("/favorite")
+    public String favorite(@RequestBody Collection collection){
+        return videoService.favorite(collection);
+    }
+
+    //点赞视频
+    @RequestMapping("/like/{videoId}")
+    public String like(@PathVariable("videoId") Integer id){
+        return videoService.like(id);
     }
 
 

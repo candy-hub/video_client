@@ -153,11 +153,18 @@ public class VideoServiceImpl implements VideoService{
             if(s.equals(0)){
                 //失败返回0
                 return "0";
+            }else{
+                //获取当前视频的下载量
+                Integer videoDownload = video.getVideoDownload();
+                int i = videoDownload.intValue() + 1;
+                Integer down = Integer.valueOf(i);
+                video.setVideoDownload(down);
+                return "1";
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
-        return "1";
+        return null;
     }
 
     @Override
@@ -187,7 +194,7 @@ public class VideoServiceImpl implements VideoService{
     @Override
     public List<Map> search(String searchName) throws IOException {
         //搜索请求对象
-        SearchRequest searchRequest = new SearchRequest("items-test");
+        SearchRequest searchRequest = new SearchRequest("video-test");
         //设置类型
         searchRequest.types("doc");
         //搜索源构建对象
@@ -216,7 +223,7 @@ public class VideoServiceImpl implements VideoService{
     }
 
     @Override
-    public String collection(Collection collection) {
+    public String favorite(Collection collection) {
         collectionRepository.save(collection);
         Integer videoId = collection.getVideoId();
         Video video = videoRepository.findById(videoId).get();
@@ -228,6 +235,15 @@ public class VideoServiceImpl implements VideoService{
         return "1";
     }
 
+    @Override
+    public String like(Integer id) {
+        Video video = videoRepository.findById(id).get();
+        Integer videoLike = video.getVideoLike();
+        int i = videoLike.intValue() + 1;
+        Integer like = Integer.valueOf(i);
+        video.setVideoLike(like);
+        return "1";
+    }
 }
 
 
