@@ -7,5 +7,5 @@ import java.math.BigDecimal;
 @Data
 public class PayResponse {
     private Integer userId;
-    private BigDecimal rechargeMoney;
+    private BigDecimal rechargeVip;
 }
