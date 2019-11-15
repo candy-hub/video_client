@@ -159,6 +159,7 @@ public class VideoServiceImpl implements VideoService{
                 int i = videoDownload.intValue() + 1;
                 Integer down = Integer.valueOf(i);
                 video.setVideoDownload(down);
+                videoRepository.save(video);
                 return "1";
             }
         } catch (Throwable throwable) {
@@ -232,6 +233,7 @@ public class VideoServiceImpl implements VideoService{
         int i = videoFavorite.intValue() + 1;
         Integer favorite = Integer.valueOf(i);
         video.setVideoFavorite(favorite);
+        videoRepository.save(video);
         return "1";
     }
 
@@ -240,8 +242,11 @@ public class VideoServiceImpl implements VideoService{
         Video video = videoRepository.findById(id).get();
         Integer videoLike = video.getVideoLike();
         int i = videoLike.intValue() + 1;
+       // System.out.println(i);
         Integer like = Integer.valueOf(i);
+       // System.out.println("======"+like);
         video.setVideoLike(like);
+        videoRepository.save(video);
         return "1";
     }
 }
