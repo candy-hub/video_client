@@ -33,7 +33,7 @@ public interface VideoService {
     //模糊查询
     public List<Map> search(String searchName) throws IOException;
     //收藏视频
-    public String favorite(Collection collection);
+    public String favorite(Integer userId,Integer videoId);
     //点赞视频
     public String like(Integer id);
 

@@ -224,17 +224,25 @@ public class VideoServiceImpl implements VideoService{
     }
 
     @Override
-    public String favorite(Collection collection) {
-        collectionRepository.save(collection);
-        Integer videoId = collection.getVideoId();
-        Video video = videoRepository.findById(videoId).get();
-        //获取当前视频的收藏量
-        Integer videoFavorite = video.getVideoFavorite();
-        int i = videoFavorite.intValue() + 1;
-        Integer favorite = Integer.valueOf(i);
-        video.setVideoFavorite(favorite);
-        videoRepository.save(video);
-        return "1";
+    public String favorite(Integer userId,Integer videoId) {
+        List<Collection> list = collectionRepository.findAllByUserIdAndVideoId(userId, videoId);
+        if(list.size()>0){
+            return "0";//已存在
+        }else{
+            Video video = videoRepository.findById(videoId).get();
+            Collection collection=new Collection();
+            collection.setUserId(userId);
+            collection.setVideoId(videoId);
+            collectionRepository.save(collection);
+            //获取当前视频的收藏量
+            Integer videoFavorite = video.getVideoFavorite();
+            int i = videoFavorite.intValue() + 1;
+            Integer favorite = Integer.valueOf(i);
+            video.setVideoFavorite(favorite);
+            videoRepository.save(video);
+            return "1";//加入
+        }
+
     }
 
     @Override
