@@ -124,6 +124,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAllByUserRechargeOrderNumber(userRechargeOrderNumber);
     }
 
+    @Override
+    public User findAllByUserRechargeVipOrderNumber(String userRechargeVipOrderNumber) {
+        return userRepository.findAllByUserRechargeVipOrderNumber(userRechargeVipOrderNumber);
+    }
+
     /*
      * 管理人员界面
      */
