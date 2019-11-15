@@ -32,20 +32,36 @@ public class PayController {
     @Resource
     UserService userService;
 
+    @RequestMapping(value = "/aliPay/{userId}/{money}",method = RequestMethod.POST)
+    public String aliPay(@PathVariable("userId")Integer userId,@PathVariable("money")BigDecimal money){
+        System.out.println(userId);
+        System.out.println(money);
+        User user=userService.findByUserId(userId);
+        user.setUserRechargeOrderNumber(orderUtils.getOrder());
+        userService.update(user);
+        String pay="";
+        try {
+            pay = alipayUtils.pay(user,money);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        return pay;
+    }
+
     @RequestMapping(value = "/userRecharge",method = RequestMethod.POST)
     public String userRecharge(@RequestBody PayResponse payResponse){
         System.out.println(payResponse.getUserId());
         System.out.println(payResponse.getRechargeMoney());
-        User user=new User();
+        User user=userService.findByUserId(payResponse.getUserId());
         user.setUserRechargeOrderNumber(orderUtils.getOrder());
         user.setUserMoney(payResponse.getRechargeMoney());
         userService.update(user);
         String pay="";
-        try {
-            pay = alipayUtils.pay(user);
+        /*try {
+            //pay = alipayUtils.pay(user);
         } catch (AlipayApiException e) {
             e.printStackTrace();
-        }
+        }*/
         return pay;
     }
 
@@ -73,17 +89,18 @@ public class PayController {
         if (!outTradeNo.equals(user.getUserRechargeOrderNumber())) {
             throw new AlipayApiException("out_trade_no错误");
         }
-
-        BigDecimal userMoney = user.getUserMoney();
+        /*BigDecimal userMoney = user.getUserMoney();
         String totalAmount = params.get("total_amount");
         BigDecimal bigDecimal=new BigDecimal(totalAmount);
         if ((userMoney).compareTo(bigDecimal)!=0) {
             throw new AlipayApiException("error total_amount");
-        }
-
+        }*/
         if (!params.get("app_id").equals(AlipayConfig.app_id)) {
             throw new AlipayApiException("app_id不一致");
         }
+        String totalAmount = params.get("total_amount");
+        BigDecimal bigDecimal=new BigDecimal(totalAmount);
+        user.setUserMoney(bigDecimal);
         userService.update(user);
     }
 }
