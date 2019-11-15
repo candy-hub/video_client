@@ -104,6 +104,16 @@ public class UserServiceImpl implements UserService {
         return userRepository.saveAndFlush(user);
     }
 
+    /*用户修改密码*/
+    @Override
+    public String updatePassword(User user) {
+        User user1 = userRepository.findById(user.getUserId()).get();
+        String pass=md5Utils.getPassword(user.getUserName(),user.getUserPassword());
+        user1.setUserPassword(pass);
+        userRepository.save(user1);
+        return "success";
+    }
+
     @Override
     public void userRecharge(User user) {
         userRepository.findById(user.getUserId());

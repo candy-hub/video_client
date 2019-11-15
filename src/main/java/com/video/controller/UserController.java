@@ -93,10 +93,12 @@ public class UserController {
         return "success";
     }
 
-   /* @RequestMapping(value = "/updatePassword",method=RequestMethod.POST)
-    public String updatePassword(@RequestBody User user,@RequestParam String password){
-
-    }*/
+    /*用户修改密码*/
+    @RequestMapping(value = "/updatePassword",method = RequestMethod.POST)
+    public String updatePassword(@RequestBody User user){
+        //System.out.println(user);
+        return userService.updatePassword(user);
+    }
 
     /*
      * 管理人员界面

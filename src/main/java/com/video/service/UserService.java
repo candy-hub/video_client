@@ -28,7 +28,7 @@ public interface UserService {
 
     User updateUser(User user);//用户完善个人信息
 
-    //String updatePassword(String );
+    String updatePassword(User user);//用户修改密码
 
     void userRecharge(User user);//用户充值
 

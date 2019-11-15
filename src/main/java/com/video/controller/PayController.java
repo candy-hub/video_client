@@ -3,6 +3,7 @@ package com.video.controller;
 import com.alipay.api.AlipayApiException;
 import com.video.config.AlipayConfig;
 import com.video.domain.User;
+import com.video.response.PayResponse;
 import com.video.service.UserService;
 import com.video.utils.AlipayUtils;
 import com.video.utils.OrderUtils;
@@ -32,14 +33,16 @@ public class PayController {
     UserService userService;
 
     @RequestMapping(value = "/userRecharge",method = RequestMethod.POST)
-    public String userRecharge(@RequestBody User user){
-        User user1=new User();
-        user1.setUserRechargeOrderNumber(orderUtils.getOrder());
-        user1.setUserMoney(user.getUserMoney());
+    public String userRecharge(@RequestBody PayResponse payResponse){
+        System.out.println(payResponse.getUserId());
+        System.out.println(payResponse.getRechargeMoney());
+        User user=new User();
+        user.setUserRechargeOrderNumber(orderUtils.getOrder());
+        user.setUserMoney(payResponse.getRechargeMoney());
         userService.update(user);
         String pay="";
         try {
-            pay = alipayUtils.pay(user1);
+            pay = alipayUtils.pay(user);
         } catch (AlipayApiException e) {
             e.printStackTrace();
         }
