@@ -4,6 +4,10 @@ package com.video.service;
 import com.video.domain.Video;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @Description:
  * @Company: NB
@@ -16,12 +20,16 @@ public interface VideoService {
     //上传视频
     public String upload(MultipartFile file);
     //添加视频
-    public String addVideo(Video video);
+    public String addVideo(Video video) throws IOException;
     //上传封面
     public String uploadPic(MultipartFile file);
     //删除视频
-    public String deleteVideo(Integer id);
+    public String deleteVideo(Integer id) throws IOException;
     //视频下载
     public String download(Video video);
+    //导入es库
+    public String im() throws IOException;
+    //模糊查询
+    public List<Map> search(String searchName) throws IOException;
 
 }
