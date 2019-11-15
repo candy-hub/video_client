@@ -7,6 +7,7 @@ import com.video.response.PayResponse;
 import com.video.service.UserService;
 import com.video.utils.AlipayUtils;
 import com.video.utils.OrderUtils;
+import com.video.utils.VipUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,10 +30,13 @@ public class PayController {
     @Autowired
     private AlipayUtils alipayUtils;
 
+    @Autowired
+    private VipUtils vipUtils;
+
     @Resource
     UserService userService;
 
-    @RequestMapping(value = "/aliPay/{userId}/{money}",method = RequestMethod.POST)
+    @RequestMapping(value = "/aliPayPayForCount/{userId}/{money}",method = RequestMethod.POST)
     public String aliPay(@PathVariable("userId")Integer userId,@PathVariable("money")BigDecimal money){
         System.out.println(userId);
         System.out.println(money);
@@ -48,20 +52,27 @@ public class PayController {
         return pay;
     }
 
-    @RequestMapping(value = "/userRecharge",method = RequestMethod.POST)
+    @RequestMapping(value = "/countPayForVip",method = RequestMethod.POST)
+    public User countPayForVip(@RequestBody PayResponse payResponse){
+        User user = userService.findByUserId(payResponse.getUserId());
+        user.setUserMoney(user.getUserMoney().subtract(payResponse.getRechargeVip()));
+        return userService.update(user);
+    }
+
+
+    @RequestMapping(value = "/alipayPayForVip",method = RequestMethod.POST)
     public String userRecharge(@RequestBody PayResponse payResponse){
-        System.out.println(payResponse.getUserId());
-        System.out.println(payResponse.getRechargeMoney());
+       /* System.out.println(payResponse.getUserId());
+        System.out.println(payResponse.getRechargeVip());*/
         User user=userService.findByUserId(payResponse.getUserId());
-        user.setUserRechargeOrderNumber(orderUtils.getOrder());
-        user.setUserMoney(payResponse.getRechargeMoney());
+        user.setUserRechargeVipOrderNumber(orderUtils.getOrder());
         userService.update(user);
         String pay="";
-        /*try {
-            //pay = alipayUtils.pay(user);
+        try {
+            pay = vipUtils.pay(user,payResponse.getRechargeVip());
         } catch (AlipayApiException e) {
             e.printStackTrace();
-        }*/
+        }
         return pay;
     }
 
@@ -101,6 +112,46 @@ public class PayController {
         String totalAmount = params.get("total_amount");
         BigDecimal bigDecimal=new BigDecimal(totalAmount);
         user.setUserMoney(bigDecimal);
+        userService.update(user);
+    }
+
+
+    @RequestMapping(value = "/notifyVip",method = RequestMethod.POST)
+    public void notifyVip(HttpServletRequest request, HttpServletResponse response)throws AlipayApiException {
+        Map<String,String> params = new HashMap<String,String>();
+        Map requestParams = request.getParameterMap();
+        for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+            String name = (String) iter.next();
+            String[] values = (String[]) requestParams.get(name);
+            String valueStr = "";
+            for (int i = 0; i < values.length; i++) {
+                valueStr = (i == values.length - 1) ? valueStr + values[i]
+                        : valueStr + values[i] + ",";
+            }
+            params.put(name, valueStr);
+        }
+        try {
+            response.getWriter().write("success");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String outTradeNo=params.get("out_trade_no");
+        User user= userService.findAllByUserRechargeOrderNumber(outTradeNo);
+        if (!outTradeNo.equals(user.getUserRechargeOrderNumber())) {
+            throw new AlipayApiException("out_trade_no错误");
+        }
+        /*BigDecimal userMoney = user.getUserMoney();
+        String totalAmount = params.get("total_amount");
+        BigDecimal bigDecimal=new BigDecimal(totalAmount);
+        if ((userMoney).compareTo(bigDecimal)!=0) {
+            throw new AlipayApiException("error total_amount");
+        }*/
+        if (!params.get("app_id").equals(AlipayConfig.app_id)) {
+            throw new AlipayApiException("app_id不一致");
+        }
+        String totalAmount = params.get("total_amount");
+        BigDecimal bigDecimal=new BigDecimal(totalAmount);
+        user.setUserMoney(user.getUserMoney().subtract(bigDecimal));
         userService.update(user);
     }
 }
