@@ -1,6 +1,7 @@
 package com.video.service;
 
 
+import com.video.domain.Collection;
 import com.video.domain.Video;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,5 +32,7 @@ public interface VideoService {
     public String im() throws IOException;
     //模糊查询
     public List<Map> search(String searchName) throws IOException;
+    //收藏视频
+    public String collection(Collection collection);
 
 }

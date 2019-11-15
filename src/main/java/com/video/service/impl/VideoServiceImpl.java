@@ -1,6 +1,8 @@
 package com.video.service.impl;
 
+import com.video.dao.CollectionRepository;
 import com.video.dao.VideoRepository;
+import com.video.domain.Collection;
 import com.video.domain.Video;
 import com.video.service.VideoService;
 import com.video.utils.EsUtils;
@@ -57,6 +59,9 @@ public class VideoServiceImpl implements VideoService{
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private CollectionRepository collectionRepository;
 
     private static String objectName;
 
@@ -210,6 +215,19 @@ public class VideoServiceImpl implements VideoService{
         return list;
     }
 
+    @Override
+    public String collection(Collection collection) {
+        collectionRepository.save(collection);
+        Integer videoId = collection.getVideoId();
+        Video video = videoRepository.findById(videoId).get();
+        //获取当前视频的收藏量
+        Integer videoFavorite = video.getVideoFavorite();
+        int i = videoFavorite.intValue() + 1;
+        Integer favorite = Integer.valueOf(i);
+        video.setVideoFavorite(favorite);
+        return "1";
     }
+
+}
 
 
