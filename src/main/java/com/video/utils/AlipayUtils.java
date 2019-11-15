@@ -15,15 +15,15 @@ import java.math.BigDecimal;
 
 @Component
 public class AlipayUtils {
-    public String pay(User user) throws AlipayApiException {
+    public String pay(User user,BigDecimal money) throws AlipayApiException {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl,AlipayConfig.app_id,AlipayConfig.merchant_private_key,"json","utf-8",AlipayConfig.alipay_public_key,"RSA2");
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
         alipayRequest.setBizContent("{" +
                 "    \"out_trade_no\":\""+user.getUserRechargeOrderNumber()+"\"," +
                 "    \"product_code\":\"FAST_INSTANT_TRADE_PAY\"," +
-                "    \"total_amount\":\""+user.getUserMoney()+"\"," +
-                "    \"subject\":\"用户充值\"," +
-                "    \"body\":\"用户充值\"," +
+                "    \"total_amount\":\""+money+"\"," +
+                "    \"subject\":\"用户账户充值\"," +
+                "    \"body\":\"用户账户充值\"," +
                 "    \"passback_params\":\"merchantBizType%3d3C%26merchantBizNo%3d2016010101111\"," +
                 "    \"extend_params\":{" +
                 "    \"sys_service_provider_id\":\"2088511833207846\"" +
