@@ -32,6 +32,23 @@ public class PayController {
     @Resource
     UserService userService;
 
+    @RequestMapping(value = "/aliPay/{userId}/{money}",method = RequestMethod.POST)
+    public String aliPay(@PathVariable("userId")Integer userId,@PathVariable("money")String money){
+        System.out.println(userId);
+        System.out.println(money);
+        /*User user=new User();
+        user.setUserRechargeOrderNumber(orderUtils.getOrder());
+        user.setUserMoney(payResponse.getRechargeMoney());
+        userService.update(user);*/
+        String pay="";
+        /*try {
+            pay = alipayUtils.pay(user);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }*/
+        return pay;
+    }
+
     @RequestMapping(value = "/userRecharge",method = RequestMethod.POST)
     public String userRecharge(@RequestBody PayResponse payResponse){
         System.out.println(payResponse.getUserId());
