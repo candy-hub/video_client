@@ -51,6 +51,9 @@ public class User {
     private Date userUptime;//用户注册时间
 
     @Column(name = "idx_user_recharge")
-    private String userRechargeOrderNumber;//用户充值订单编号
+    private String userRechargeOrderNumber;//用户充值账户订单编号
+
+    @Column(name = "idx_user_recharge_vip")
+    private String userRechargeVipOrderNumber;//用户充值会员订单编号
     
 }

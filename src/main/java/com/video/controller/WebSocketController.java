@@ -6,17 +6,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.video.response.SocketMsg;
+import com.video.utils.SpringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
@@ -35,8 +33,7 @@ public class WebSocketController {
 
     private Session session;
 
-    @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate = SpringUtils.getBean("redisTemplates");
 
     //用来存放每个客户端对应的MyWebSocket对象。
     private static CopyOnWriteArraySet<WebSocketController> webSocketSet = new CopyOnWriteArraySet<WebSocketController>();
@@ -60,7 +57,7 @@ public class WebSocketController {
         message.put("type",0); //消息类型，0-连接成功，1-用户消息
         message.put("people",webSocketSet.size()); //在线人数
         message.put("name",videoId); //昵称
-        message.put("videoId",videoId); //message.put("aisle",session.getId());频道号
+        message.put("aisle",session.getId()); //message.put("aisle",session.getId());频道号
         this.session.getAsyncRemote().sendText(new Gson().toJson(message));
     }
 
@@ -88,16 +85,37 @@ public class WebSocketController {
         // 然后通过socketMsg的type进行判断是单聊还是群聊，进行相应的处理:
         ObjectMapper objectMapper = new ObjectMapper();
         SocketMsg socketMsg;
-
+        List<String> msgList=null;
 
         try {
             socketMsg = objectMapper.readValue(message, SocketMsg.class);
-            Object o = redisTemplate.opsForHash().get(videoId+"视频弹幕", "时间："+socketMsg.getMsg());
-            List<String> msgList=(List<String>)o;
-//            socketMsg.setMsg(msgList);
+            String msg = socketMsg.getMsg();
+         /*   RedisConnection connection = jedisConnectionFactory.getConnection();
+            connection.hget(videoId+"视频弹幕".getBytes("utf-8"), "时间："+msg.getBytes());*/
+            Object o = redisTemplate.opsForValue().get("视频弹幕:" + videoId + "时间：" + msg);
+            msgList = (List)o;
+            /*if (o!=null) {
+//                T[] targetArray=(T[])o;
+                String[] obj=(String[])o;
+                System.out.println(obj);
+                System.out.println(obj[0]+"======"+obj[1]);
+                Map o1 = (Map) o;
+
+                if (o1.size() > 0) {
+                    *//*把map中值遍历存入集合中*//*
+                    Collection<Object> values = o1.values();
+                    System.out.println(values);  //数组
+                    *//*Iterator<Object> iterator = values.iterator();
+                    while (iterator.hasNext()) {
+                        msgList.add((String) iterator.next());
+                    }*//*
+                }
+            }*/
+            System.out.println(msgList);
+            socketMsg.setMsgs(msgList);
             if (socketMsg.getType() == 1) {
                 //单聊.需要找到发送者和接受者.
-                socketMsg.setFromUser(videoId+"");//发送者.
+                socketMsg.setFromUser(session.getId());//发送者.
                 Session fromSession = map.get(socketMsg.getFromUser());
                 Session toSession = map.get(socketMsg.getToUser());
                 //发送给接受者.
@@ -106,17 +124,15 @@ public class WebSocketController {
                     Map<String,Object> m=new HashMap<String, Object>();
                     m.put("type",1);
                     m.put("name",videoId);
-                    m.put("msg",msgList);
-                    fromSession.getAsyncRemote().sendText(new Gson().toJson(m));
+                    m.put("msg",socketMsg.getMsgs());
+//                    fromSession.getAsyncRemote().sendText(new Gson().toJson(m));
                     toSession.getAsyncRemote().sendText(new Gson().toJson(m));
                 } else {
                     //发送给发送者.
                     fromSession.getAsyncRemote().sendText("系统消息：对方不在线或者您输入的频道号不对");
                 }
-            } else {
-                //群发消息
-                //broadcast(nickname + ": " + socketMsg.getMsg());
             }
+
 
         } catch (JsonParseException e) {
             e.printStackTrace();

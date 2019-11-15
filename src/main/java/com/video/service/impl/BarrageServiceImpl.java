@@ -3,6 +3,7 @@ package com.video.service.impl;
 import com.video.dao.BarrageRepository;
 import com.video.domain.Barrage;
 import com.video.service.BarrageService;
+import com.video.utils.SpringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +14,10 @@ import java.util.List;
 @Service
 public class BarrageServiceImpl implements BarrageService {
 
-    @Resource
-    private RedisTemplate redisTemplate;
+  /*  @Resource
+    private RedisTemplate redisTemplate;*/
+
+    private RedisTemplate redisTemplate = SpringUtils.getBean("redisTemplates");
 
     @Resource
     private BarrageRepository barrageRepository;
@@ -24,12 +27,12 @@ public class BarrageServiceImpl implements BarrageService {
         Barrage save = barrageRepository.save(barrage);
         Integer videoId = save.getVideoId();
         List<String> list=new ArrayList<>();
-        Object o = redisTemplate.opsForHash().get(videoId + "视频弹幕", "时间：" + save.getVideoTime());
+        Object o = redisTemplate.opsForValue().get("视频弹幕:" + videoId + "时间：" + save.getVideoTime());
         if (o!=null) {
             list = (List<String>) o;
         }
         list.add(save.getBarrageContent());
-        redisTemplate.opsForHash().put(videoId + "视频弹幕", "时间：" + save.getVideoTime(), list);
+        redisTemplate.opsForValue().set("视频弹幕:"+videoId+"时间："+save.getVideoTime(),list);
         return save;
     }
 
