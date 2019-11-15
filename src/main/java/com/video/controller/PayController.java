@@ -2,7 +2,6 @@ package com.video.controller;
 
 import com.alipay.api.AlipayApiException;
 import com.video.config.AlipayConfig;
-import com.video.config.VipConfig;
 import com.video.domain.User;
 import com.video.response.PayResponse;
 import com.video.service.UserService;
@@ -55,19 +54,18 @@ public class PayController {
 
     @RequestMapping(value = "/countPayForVip",method = RequestMethod.POST)
     public String countPayForVip(@RequestBody PayResponse payResponse){
-        System.out.println(payResponse);
         User user = userService.findByUserId(payResponse.getUserId());
         user.setUserMoney(user.getUserMoney().subtract(payResponse.getRechargeVip()));
         user.setUserStatue(1);
-         userService.update(user);
+        userService.update(user);
         return "1";
     }
 
 
     @RequestMapping(value = "/alipayPayForVip",method = RequestMethod.POST)
     public String userRecharge(@RequestBody PayResponse payResponse){
-        System.out.println(payResponse.getUserId());
-        System.out.println(payResponse.getRechargeVip());
+       /* System.out.println(payResponse.getUserId());
+        System.out.println(payResponse.getRechargeVip());*/
         User user=userService.findByUserId(payResponse.getUserId());
         user.setUserRechargeVipOrderNumber(orderUtils.getOrder());
         userService.update(user);
@@ -122,6 +120,7 @@ public class PayController {
 
     @RequestMapping(value = "/notifyVip",method = RequestMethod.POST)
     public void notifyVip(HttpServletRequest request, HttpServletResponse response)throws AlipayApiException {
+        System.out.println("111111111111");
         Map<String,String> params = new HashMap<String,String>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
@@ -140,9 +139,9 @@ public class PayController {
             e.printStackTrace();
         }
         String outTradeNo=params.get("out_trade_no");
-        User user= userService.findAllByUserRechargeOrderNumber(outTradeNo);
+        User user= userService.findAllByUserRechargeVipOrderNumber(outTradeNo);
         System.out.println(user);
-        if (!outTradeNo.equals(user.getUserRechargeOrderNumber())) {
+        if (!outTradeNo.equals(user.getUserRechargeVipOrderNumber())) {
             throw new AlipayApiException("out_trade_no错误");
         }
         /*BigDecimal userMoney = user.getUserMoney();
@@ -151,15 +150,10 @@ public class PayController {
         if ((userMoney).compareTo(bigDecimal)!=0) {
             throw new AlipayApiException("error total_amount");
         }*/
-        if (!params.get("app_id").equals(VipConfig.app_id)) {
+        if (!params.get("app_id").equals(AlipayConfig.app_id)) {
             throw new AlipayApiException("app_id不一致");
         }
-        /*String totalAmount = params.get("total_amount");
-        BigDecimal bigDecimal=new BigDecimal(totalAmount);*/
-        //user.setUserMoney(user.getUserMoney().subtract(bigDecimal));
         user.setUserStatue(1);
-
         userService.update(user);
-        System.out.println(user);
     }
 }

@@ -34,6 +34,8 @@ public interface UserService {
 
     User findAllByUserRechargeOrderNumber(String userRechargeOrderNumber);//通过订单编号查对象
 
+    User findAllByUserRechargeVipOrderNumber(String userRechargeVipOrderNumber);//通过VIP订单编号查对象
+
     /*
      * 管理人员界面
      */
