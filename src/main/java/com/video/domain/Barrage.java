@@ -1,6 +1,8 @@
 package com.video.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.sql.Time;
@@ -32,6 +34,8 @@ public class Barrage {
     private Integer barrageStatue;//弹幕状态
 
     @Column(name = "idx_barrage_time")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")  //入参格式
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")  //出参格式
     private Date barrageTime;//发表弹幕时的当前时间
 
     @Column(name = "idx_barrage_videotime")

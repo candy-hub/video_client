@@ -2,6 +2,8 @@ package com.video.controller;
 
 import com.video.domain.Barrage;
 import com.video.domain.Comment;
+import com.video.response.Comments;
+import com.video.response.Pagination;
 import com.video.service.CommentService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +19,22 @@ public class CommentController {
     @Resource
     private CommentService commentService;
 
-    /*查找所有*/
+    /*查找所有rid==0*/
     @RequestMapping("/findAllComment")
     public List<Comment> findAllComment(){
         return commentService.findAll();
+    }
+
+    /*查找所有rid==0*/
+    @RequestMapping("/findAllCom")
+    public Comments findAllCom(){
+        return commentService.selectAll();
+    }
+
+    /*查找所有rid!=0*/
+    @RequestMapping("/findAllComments2")
+    public List<Comment> findAllComment2(){
+        return commentService.findAll2();
     }
 
     /*存库*/
