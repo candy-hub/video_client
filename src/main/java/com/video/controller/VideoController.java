@@ -1,5 +1,6 @@
 package com.video.controller;
 
+import com.video.domain.Collection;
 import com.video.domain.Video;
 import com.video.service.VideoService;
 import org.elasticsearch.action.search.SearchRequest;
@@ -67,6 +68,18 @@ public class VideoController {
     @RequestMapping("/search/{searchName}")
     public List<Map> search(@PathVariable String searchName) throws IOException {
         return videoService.search(searchName);
+    }
+
+    //收藏视频
+    @RequestMapping("/favorite/{userId}/{id}")
+    public String favorite(@PathVariable("userId")Integer userId,@PathVariable("id") Integer videoId){
+        return videoService.favorite(userId,videoId);
+    }
+
+    //点赞视频
+    @RequestMapping("/like/{videoId}")
+    public String like(@PathVariable("videoId") Integer id){
+        return videoService.like(id);
     }
 
 

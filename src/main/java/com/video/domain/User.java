@@ -43,7 +43,7 @@ public class User {
     private String userHobby;//用户爱好
 
     @Column(name = "idx_user_statue")
-    private Integer userStatue;//用户状态
+    private Integer userStatue;//用户状态 0 普通用户 1 VIP 2 禁用
 
     @Column(name = "idx_user_uptime")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

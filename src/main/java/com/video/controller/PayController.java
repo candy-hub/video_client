@@ -53,10 +53,12 @@ public class PayController {
     }
 
     @RequestMapping(value = "/countPayForVip",method = RequestMethod.POST)
-    public User countPayForVip(@RequestBody PayResponse payResponse){
+    public String countPayForVip(@RequestBody PayResponse payResponse){
         User user = userService.findByUserId(payResponse.getUserId());
         user.setUserMoney(user.getUserMoney().subtract(payResponse.getRechargeVip()));
-        return userService.update(user);
+        user.setUserStatue(1);
+        userService.update(user);
+        return "1";
     }
 
 
@@ -118,6 +120,7 @@ public class PayController {
 
     @RequestMapping(value = "/notifyVip",method = RequestMethod.POST)
     public void notifyVip(HttpServletRequest request, HttpServletResponse response)throws AlipayApiException {
+        System.out.println("111111111111");
         Map<String,String> params = new HashMap<String,String>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
@@ -136,8 +139,9 @@ public class PayController {
             e.printStackTrace();
         }
         String outTradeNo=params.get("out_trade_no");
-        User user= userService.findAllByUserRechargeOrderNumber(outTradeNo);
-        if (!outTradeNo.equals(user.getUserRechargeOrderNumber())) {
+        User user= userService.findAllByUserRechargeVipOrderNumber(outTradeNo);
+        System.out.println(user);
+        if (!outTradeNo.equals(user.getUserRechargeVipOrderNumber())) {
             throw new AlipayApiException("out_trade_no错误");
         }
         /*BigDecimal userMoney = user.getUserMoney();
@@ -149,9 +153,7 @@ public class PayController {
         if (!params.get("app_id").equals(AlipayConfig.app_id)) {
             throw new AlipayApiException("app_id不一致");
         }
-        String totalAmount = params.get("total_amount");
-        BigDecimal bigDecimal=new BigDecimal(totalAmount);
-        user.setUserMoney(user.getUserMoney().subtract(bigDecimal));
+        user.setUserStatue(1);
         userService.update(user);
     }
 }

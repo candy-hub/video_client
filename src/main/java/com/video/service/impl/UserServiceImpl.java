@@ -1,7 +1,9 @@
 package com.video.service.impl;
 
 
+import com.video.dao.RecordRepository;
 import com.video.dao.UserRepository;
+import com.video.domain.Record;
 import com.video.domain.User;
 import com.video.response.LoginResponse;
 import com.video.service.UserService;
@@ -22,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     Md5Utils md5Utils;
+
+    @Resource
+    RecordRepository recordRepository;
 
     /*
     * 用户界面
@@ -122,6 +127,31 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findAllByUserRechargeOrderNumber(String userRechargeOrderNumber) {
         return userRepository.findAllByUserRechargeOrderNumber(userRechargeOrderNumber);
+    }
+
+    @Override
+    public User findAllByUserRechargeVipOrderNumber(String userRechargeVipOrderNumber) {
+        return userRepository.findAllByUserRechargeVipOrderNumber(userRechargeVipOrderNumber);
+    }
+
+    @Override
+    public void insertRecord(Record record) {
+        recordRepository.save(record);
+    }
+
+    @Override
+    public List<Record> findUserAllRecord(Integer userId) {
+        return recordRepository.findAllByUserId(userId);
+    }
+
+    @Override
+    public void delete(Record record) {
+        recordRepository.delete(record);
+    }
+
+    @Override
+    public void batchDelete(List<Record> record) {
+        recordRepository.deleteInBatch(record);
     }
 
     /*

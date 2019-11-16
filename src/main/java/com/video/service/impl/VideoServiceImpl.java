@@ -1,6 +1,8 @@
 package com.video.service.impl;
 
+import com.video.dao.CollectionRepository;
 import com.video.dao.VideoRepository;
+import com.video.domain.Collection;
 import com.video.domain.Video;
 import com.video.service.VideoService;
 import com.video.utils.EsUtils;
@@ -57,6 +59,9 @@ public class VideoServiceImpl implements VideoService{
 
     @Autowired
     private RestHighLevelClient restHighLevelClient;
+
+    @Autowired
+    private CollectionRepository collectionRepository;
 
     private static String objectName;
 
@@ -148,11 +153,19 @@ public class VideoServiceImpl implements VideoService{
             if(s.equals(0)){
                 //失败返回0
                 return "0";
+            }else{
+                //获取当前视频的下载量
+                Integer videoDownload = video.getVideoDownload();
+                int i = videoDownload.intValue() + 1;
+                Integer down = Integer.valueOf(i);
+                video.setVideoDownload(down);
+                videoRepository.save(video);
+                return "1";
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
-        return "1";
+        return null;
     }
 
     @Override
@@ -182,7 +195,7 @@ public class VideoServiceImpl implements VideoService{
     @Override
     public List<Map> search(String searchName) throws IOException {
         //搜索请求对象
-        SearchRequest searchRequest = new SearchRequest("items-test");
+        SearchRequest searchRequest = new SearchRequest("video-test");
         //设置类型
         searchRequest.types("doc");
         //搜索源构建对象
@@ -210,6 +223,40 @@ public class VideoServiceImpl implements VideoService{
         return list;
     }
 
+    @Override
+    public String favorite(Integer userId,Integer videoId) {
+        List<Collection> list = collectionRepository.findAllByUserIdAndVideoId(userId, videoId);
+        if(list.size()>0){
+            return "0";//已存在
+        }else{
+            Video video = videoRepository.findById(videoId).get();
+            Collection collection=new Collection();
+            collection.setUserId(userId);
+            collection.setVideoId(videoId);
+            collectionRepository.save(collection);
+            //获取当前视频的收藏量
+            Integer videoFavorite = video.getVideoFavorite();
+            int i = videoFavorite.intValue() + 1;
+            Integer favorite = Integer.valueOf(i);
+            video.setVideoFavorite(favorite);
+            videoRepository.save(video);
+            return "1";//加入
+        }
+
     }
+
+    @Override
+    public String like(Integer id) {
+        Video video = videoRepository.findById(id).get();
+        Integer videoLike = video.getVideoLike();
+        int i = videoLike.intValue() + 1;
+       // System.out.println(i);
+        Integer like = Integer.valueOf(i);
+       // System.out.println("======"+like);
+        video.setVideoLike(like);
+        videoRepository.save(video);
+        return "1";
+    }
+}
 
 

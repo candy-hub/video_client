@@ -1,5 +1,6 @@
 package com.video.service;
 
+import com.video.domain.Record;
 import com.video.domain.User;
 import com.video.response.LoginResponse;
 
@@ -33,6 +34,21 @@ public interface UserService {
     void userRecharge(User user);//用户充值
 
     User findAllByUserRechargeOrderNumber(String userRechargeOrderNumber);//通过订单编号查对象
+
+    User findAllByUserRechargeVipOrderNumber(String userRechargeVipOrderNumber);//通过VIP订单编号查对象
+
+    //新增用户的历史记录
+    void insertRecord(Record record);
+
+    //查询用户的历史记录
+    List<Record> findUserAllRecord(Integer userId);
+
+    //删除历史记录
+    void delete(Record record);
+
+    //批量删除历史记录
+    void batchDelete(List<Record> record);
+
 
     /*
      * 管理人员界面

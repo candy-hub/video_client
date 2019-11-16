@@ -1,9 +1,13 @@
 package com.video.controller;
 
+import com.video.dao.RecordRepository;
 import com.video.dao.UserRepository;
+import com.video.domain.Record;
 import com.video.domain.User;
+import com.video.domain.Video;
 import com.video.response.LoginResponse;
 import com.video.service.UserService;
+import com.video.service.VideoService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +29,6 @@ public class UserController {
 
     @Resource
     EmailUtils emailUtils;
-
     /*
     * 用户界面
     */
@@ -98,6 +101,16 @@ public class UserController {
     public String updatePassword(@RequestBody User user){
         //System.out.println(user);
         return userService.updatePassword(user);
+    }
+
+    @RequestMapping(value = "/addRecord",method = RequestMethod.POST)
+    public Record addRecord(@RequestBody Video video){
+        Record record=new Record();
+        record.setUserId(video.getUserId());
+        record.setVideoId(video.getVideoId());
+        record.setVideoPic(video.getVideoPic());
+        userService.insertRecord(record);
+        return record;
     }
 
     /*
