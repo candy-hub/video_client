@@ -134,6 +134,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAllByUserRechargeVipOrderNumber(userRechargeVipOrderNumber);
     }
 
+    /*用户历史记录*/
+
     @Override
     public void insertRecord(Record record) {
         recordRepository.save(record);
@@ -145,8 +147,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(Record record) {
-        recordRepository.delete(record);
+    public void delete(Integer recordId) {
+        recordRepository.deleteById(recordId);
     }
 
     @Override

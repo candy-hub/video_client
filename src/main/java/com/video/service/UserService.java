@@ -44,7 +44,7 @@ public interface UserService {
     List<Record> findUserAllRecord(Integer userId);
 
     //删除历史记录
-    void delete(Record record);
+    void delete(Integer recordId);
 
     //批量删除历史记录
     void batchDelete(List<Record> record);
