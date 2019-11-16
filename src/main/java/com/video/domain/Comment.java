@@ -19,13 +19,19 @@ public class Comment {
     private Integer videoId;//视频id
 
     @Column(name = "idx_user_id")
-    private Integer userId;//用户id
+    private Integer userId;//评论用户id
 
     @Column(name = "idx_user_name")
-    private String userName;//用户名
+    private String userName;//评论用户名
 
     @Column(name = "idx_user_pic")
-    private String userPic;//用户头像
+    private String userPic;//评论用户头像
+
+    @Column(name = "idx_respondent_aid")
+    private Integer respondentId;//被评论人id
+
+    @Column(name = "idx_respondent_name")
+    private String respondentName;//被评论人用户名
 
     @Column(name = "idx_comment_content")
     private String commentContent;//评论内容
