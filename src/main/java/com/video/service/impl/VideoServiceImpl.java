@@ -257,6 +257,12 @@ public class VideoServiceImpl implements VideoService{
         videoRepository.save(video);
         return "1";
     }
+
+    @Override
+    public Video findVideoByVideoId(Integer id) {
+        Video video = videoRepository.findById(id).get();
+        return video;
+    }
 }
 
 
