@@ -1,16 +1,21 @@
 package com.video.service.impl;
 
+import com.video.dao.CommentDao;
 import com.video.dao.CommentRepository;
-import com.video.domain.Barrage;
 import com.video.domain.Comment;
+import com.video.response.Comments;
+import com.video.response.Pagination;
 import com.video.service.CommentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -18,7 +23,13 @@ public class CommentServiceImpl implements CommentService {
     @Resource
     private CommentRepository commentRepository;
 
-    @Override
+    @Resource
+    private CommentDao commentDao;
+
+    @Resource
+    private RedisTemplate redisTemplate;
+
+   /* @Override
     public List<Comment> findAll() {
 
         List<Comment> all = commentRepository.findAll();
@@ -42,11 +53,60 @@ public class CommentServiceImpl implements CommentService {
         }else {
             return null;
         }
+    }*/
+
+    /*主楼*/
+    @Override
+    public Comments selectAll() {
+        Comments comments=new Comments();
+        int commentRid=0;
+        Pageable pages=PageRequest.of(0,3);
+        List<Pagination> list=new ArrayList<>();
+        Pagination pag=new Pagination();
+        Page<Comment> all = commentRepository.findAllByCommentRid(commentRid, pages);
+        pag.setList(all.getContent());
+        pag.setTotal(all.getTotalElements());
+        comments.setCom(pag);
+
+        for (Comment comment:all.getContent()){
+            Pagination pagination=new Pagination();
+            Page<Comment> allByCid = commentRepository.findAllByCommentRid(comment.getCommentId(), pages);
+            pagination.setList(allByCid.getContent());
+            pagination.setTotal(allByCid.getTotalElements());  //总条数
+//            过期时间
+//            redisTemplate.opsForHash().put(comment.getVideoId()+"视频评论",comment.getCommentId()+"下附属评论",pagination);
+            list.add(pagination);
+        }
+
+        comments.setComment(list);
+        return comments;
+    }
+
+    /*从楼分页  页面显示时记得判断状态码*/
+    @Override
+    public Pagination<Comment> findByPage(Integer commentId, int page, int size) {
+        Pageable pages=PageRequest.of(page-1,size);
+        Pagination pagination=new Pagination();
+        Page<Comment> allByCid = commentRepository.findAllByCommentId(commentId, pages);
+        pagination.setList(allByCid.getContent());
+        pagination.setTotal(allByCid.getTotalElements());
+        return pagination;
+    }
+
+    @Override
+    public List<Comment> findAll() {
+        return commentDao.findAllByRid();
+    }
+
+    @Override
+    public List<Comment> findAll2() {
+        return commentDao.findAllByRid2();
     }
 
     @Override
     public Comment save(Comment comment) {
         comment.setCommentTime(new Date());
+        comment.setCommentStatue(0);
         if (comment!=null){
             return commentRepository.save(comment);
         }else {
