@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+namespace=""  mapper接口的路径对应
+-->
+<mapper namespace="com.video.dao.CommentDao">
+
+    <!-- @Column(name = "pk_comment_id")
+    private Integer commentId;//评论id
+
+    @Column(name = "pk_video_id")
+    private Integer videoId;//视频id-->
+
+    <resultMap id="MyResultMap" type="com.video.domain.Comment">
+        <id property="commentId" column="pk_comment_id"></id>
+        <result property="videoId" column="pk_video_id"></result>
+        <result property="userId" column="idx_user_id"></result>
+        <result property="userName" column="idx_user_name"></result>
+        <result property="userPic" column="idx_user_pic"></result>
+        <result property="respondentId" column="idx_respondent_aid"></result>
+        <result property="respondentName" column="idx_respondent_name"></result>
+        <result property="commentContent" column="idx_comment_content"></result>
+        <result property="commentStatue" column="idx_comment_statue"></result>
+        <result property="commentRid" column="idx_comment_rid"></result>
+        <result property="commentLid" column="idx_comment_lid"></result>
+        <result property="commentTime" column="idx_comment_time"></result>
+        <result property="commentCount" column="idx_comment_count"></result>
+    </resultMap>
+
+<!--List<Comment> findAllByRid();
+
+    List<Comment> findAllByRid2();-->
+
+    <select id="findAllByRid" resultMap="MyResultMap">
+        select * from video_comment where idx_comment_rid=0 and idx_comment_statue!=2
+    </select>
+    
+    <select id="findAllByRid2" resultMap="MyResultMap" parameterType="java.lang.Integer">
+        select * from video_comment where idx_comment_rid=#{commentId} and idx_comment_statue!=2
+    </select>
+
+    <select id="findAllByCid" resultMap="MyResultMap" parameterType="java.lang.Integer">
+        select * from video_comment where idx_comment_rid=#{commentId} and idx_comment_statue!=2
+    </select>
+
+</mapper>
