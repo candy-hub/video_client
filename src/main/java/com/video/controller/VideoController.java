@@ -82,5 +82,10 @@ public class VideoController {
         return videoService.like(id);
     }
 
+    //根据id查视频
+    @RequestMapping("findVideoByVideoId/{videoId}")
+    public Video findVideoByVideoId(@PathVariable("videoId") Integer id){
+        return videoService.findVideoByVideoId(id);
+    }
 
 }

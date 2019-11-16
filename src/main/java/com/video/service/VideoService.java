@@ -36,5 +36,7 @@ public interface VideoService {
     public String favorite(Integer userId,Integer videoId);
     //点赞视频
     public String like(Integer id);
+    //根据id查视频
+    public Video findVideoByVideoId(Integer id);
 
 }

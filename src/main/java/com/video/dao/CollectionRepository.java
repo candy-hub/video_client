@@ -14,4 +14,8 @@ import java.util.List;
  */
 public interface CollectionRepository extends JpaRepository<Collection,Integer> {
     List<Collection> findAllByUserIdAndVideoId(Integer userId,Integer videoId);
+
+    List<Collection> findAllByUserId(Integer userId);
+
+    void deleteByUserIdAndVideoId(Integer userId,Integer videoId);
 }
