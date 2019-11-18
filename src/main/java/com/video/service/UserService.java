@@ -40,6 +40,11 @@ public interface UserService {
     //新增用户的历史记录
     Record insertRecord(Record record);
 
+    //通过userId和videoId查看一条历史记录
+    List<Record> findRecordByUserIdAndVideoId(Integer userId,Integer videoId);
+
+    Record updateRecord(Record record);
+
     //查询用户的历史记录
     List<Record> findUserAllRecord(Integer userId);
 

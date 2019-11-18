@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
@@ -107,6 +108,21 @@ public class UserController {
         Record record1 = userService.insertRecord(record);
         redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
         return record1 ;
+    }
+
+    @RequestMapping(value = "/findRecordByVideoId/{videoId}/{userId}",method = RequestMethod.GET)
+    public List<Record> findRecordByVideoId(@PathVariable("videoId")Integer videoId,@PathVariable("userId")Integer userId){
+        List<Record> all = userService.findRecordByUserIdAndVideoId(userId, videoId);
+        return all;
+
+    }
+
+    @RequestMapping(value = "/updateRecord",method = RequestMethod.POST)
+    public Record updateRecord(@RequestBody Record record){
+        System.out.println(record);
+        Record record1 = userService.updateRecord(record);
+        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
+        return record1;
     }
 
     /*清空用户历史记录*/
