@@ -25,7 +25,7 @@ public class UserController {
     @Resource
     EmailUtils emailUtils;
 
-    @Resource
+    @Resource(name = "redisTemplates")
     RedisTemplate redisTemplate;
     /*
     * 用户界面
@@ -104,14 +104,14 @@ public class UserController {
     /*新增用户历史记录*/
     @RequestMapping(value = "/addRecord",method = RequestMethod.POST)
     public String addRecord(@RequestBody Record record){
-        System.out.println(record);
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++"+record);
         /*userService.insertRecord(record);
-        redisTemplate.opsForHash().put(record.getUserId(), record.getVideoId(), record);*/
+        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record);*/
         return "1";
     }
 
-    /*批量删除用户历史记录*/
-    @RequestMapping(value = "/batchDelete",method = RequestMethod.POST)
+    /*清空用户历史记录*/
+    @RequestMapping(value = "/deleteAll",method = RequestMethod.POST)
     public String batchDelete(@RequestBody List<Record> records){
         for (Record record:records){
             userService.delete(record.getRecordId());
