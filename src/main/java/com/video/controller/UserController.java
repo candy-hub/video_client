@@ -103,11 +103,10 @@ public class UserController {
 
     /*新增用户历史记录*/
     @RequestMapping(value = "/addRecord",method = RequestMethod.POST)
-    public String addRecord(@RequestBody Record record){
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++"+record);
-        /*userService.insertRecord(record);
-        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record);*/
-        return "1";
+    public Record addRecord(@RequestBody Record record){
+        Record record1 = userService.insertRecord(record);
+        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
+        return record1 ;
     }
 
     /*清空用户历史记录*/
