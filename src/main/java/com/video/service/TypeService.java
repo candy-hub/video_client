@@ -14,4 +14,6 @@ import java.util.List;
 public interface TypeService {
 
     public List<Type> findAllTypes();
+
+    public String findTypeById(Integer id);
 }
