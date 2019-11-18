@@ -277,6 +277,12 @@ public class VideoServiceImpl implements VideoService{
         res.setTotal(all.getTotalElements());
         return res;
     }
+
+    @Override
+    public List<Video> findVideoById(Integer id) {
+        List<Video> list = videoRepository.findAllByUserId(id);
+        return list;
+    }
 }
 
 

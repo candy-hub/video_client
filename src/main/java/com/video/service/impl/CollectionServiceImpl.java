@@ -51,4 +51,10 @@ public class CollectionServiceImpl implements CollectionService{
         videoRepository.save(video);
         return "1";
     }
+
+    @Override
+    public List<Collection> findAllCollection(Integer userId) {
+        List<Collection> list = collectionRepository.findAllByUserId(userId);
+        return list;
+    }
 }

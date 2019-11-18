@@ -95,4 +95,9 @@ public class VideoController {
         return videoService.findVideoByUserId(id,page,size);
     }
 
+    //根据userId查询
+    @RequestMapping("/findVideoById/{userId}")
+    public List<Video> findVideoById(@PathVariable("userId")Integer id){
+        return videoService.findVideoById(id);
+    }
 }

@@ -34,4 +34,10 @@ public class CollectionController {
     public String deleteCollection(@PathVariable("userId")Integer userId,@PathVariable("videoId")Integer videoId){
         return collectionService.deleteCollection(userId,videoId);
     }
+
+    //查询个人收藏总数
+    @RequestMapping("/findAllCollection/{userId}")
+    public List<Collection> findAllCollection(@PathVariable("userId")Integer userId){
+        return collectionService.findAllCollection(userId);
+    }
 }
