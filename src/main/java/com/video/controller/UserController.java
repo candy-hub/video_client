@@ -114,7 +114,7 @@ public class UserController {
     public String batchDelete(@RequestBody List<Record> records){
         for (Record record:records){
             userService.delete(record.getRecordId());
-            redisTemplate.opsForHash().delete(record.getUserId(), record.getVideoId());
+            redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
         }
         return "1";
     }
@@ -123,14 +123,16 @@ public class UserController {
     @RequestMapping(value = "/delete",method = RequestMethod.POST)
     public String delete(@RequestBody Record record){
         userService.delete(record.getRecordId());
-        redisTemplate.opsForHash().delete(record.getUserId(), record.getVideoId());
+        redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
         return "1";
     }
 
     /*查看用户历史记录*/
-    @RequestMapping(value = "/findUserAllRecord",method = RequestMethod.POST)
-    public List<Record> findUserAllRecord(Integer userId){
-        Map<Object, Object> entries = redisTemplate.opsForHash().entries(userId);
+    @RequestMapping(value = "/findUserAllRecord/{userId}",method = RequestMethod.POST)
+    public List<Record> findUserAllRecord(@PathVariable("userId") Integer userId){
+        System.out.println("+++++++++++++++++++++++++++++++++++"+userId);
+
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries("user"+userId);
         List<Record> records=new LinkedList<Record>();
         if (entries.size()>0){
             Collection<Object> values = entries.values();
@@ -138,19 +140,13 @@ public class UserController {
             while(iterator.hasNext()){
                 records.add((Record) iterator.next());
             }
-            /*records.sort(new Comparator<Record>() {
-                @Override
-                public int compare(Record o1, Record o2) {
-                    return o1.getVideoId()-o2.getVideoId();
-                }
-            });*/
             return records;
         }else{
             List<Record> all = userService.findUserAllRecord(userId);
             if (all!=null){
                 Map<String, Object> map = new TreeMap<>();
                 for (Record record : all) {
-                    redisTemplate.opsForHash().put(userId, record.getVideoId(), record);
+                    redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(),record);
                 }
                 return all;
             }else {
