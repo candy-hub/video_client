@@ -1,22 +1,17 @@
 package com.video.controller;
 
-import com.video.dao.RecordRepository;
-import com.video.dao.UserRepository;
 import com.video.domain.Record;
 import com.video.domain.User;
-import com.video.domain.Video;
 import com.video.response.LoginResponse;
 import com.video.service.UserService;
-import com.video.service.VideoService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -29,6 +24,9 @@ public class UserController {
 
     @Resource
     EmailUtils emailUtils;
+
+    @Resource(name = "redisTemplates")
+    RedisTemplate redisTemplate;
     /*
     * 用户界面
     */
@@ -103,14 +101,58 @@ public class UserController {
         return userService.updatePassword(user);
     }
 
+    /*新增用户历史记录*/
     @RequestMapping(value = "/addRecord",method = RequestMethod.POST)
-    public Record addRecord(@RequestBody Video video){
-        Record record=new Record();
-        record.setUserId(video.getUserId());
-        record.setVideoId(video.getVideoId());
-        record.setVideoPic(video.getVideoPic());
-        userService.insertRecord(record);
-        return record;
+    public Record addRecord(@RequestBody Record record){
+        Record record1 = userService.insertRecord(record);
+        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
+        return record1 ;
+    }
+
+    /*清空用户历史记录*/
+    @RequestMapping(value = "/deleteAll",method = RequestMethod.POST)
+    public String batchDelete(@RequestBody List<Record> records){
+        for (Record record:records){
+            userService.delete(record.getRecordId());
+            redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
+        }
+        return "1";
+    }
+
+    /*删除用户历史记录*/
+    @RequestMapping(value = "/delete",method = RequestMethod.POST)
+    public String delete(@RequestBody Record record){
+        userService.delete(record.getRecordId());
+        redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
+        return "1";
+    }
+
+    /*查看用户历史记录*/
+    @RequestMapping(value = "/findUserAllRecord/{userId}",method = RequestMethod.POST)
+    public List<Record> findUserAllRecord(@PathVariable("userId") Integer userId){
+        System.out.println("+++++++++++++++++++++++++++++++++++"+userId);
+
+        Map<Object, Object> entries = redisTemplate.opsForHash().entries("user"+userId);
+        List<Record> records=new LinkedList<Record>();
+        if (entries.size()>0){
+            Collection<Object> values = entries.values();
+            Iterator<Object> iterator = values.iterator();
+            while(iterator.hasNext()){
+                records.add((Record) iterator.next());
+            }
+            return records;
+        }else{
+            List<Record> all = userService.findUserAllRecord(userId);
+            if (all!=null){
+                Map<String, Object> map = new TreeMap<>();
+                for (Record record : all) {
+                    redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(),record);
+                }
+                return all;
+            }else {
+                return null;
+            }
+        }
     }
 
     /*

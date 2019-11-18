@@ -38,13 +38,13 @@ public interface UserService {
     User findAllByUserRechargeVipOrderNumber(String userRechargeVipOrderNumber);//通过VIP订单编号查对象
 
     //新增用户的历史记录
-    void insertRecord(Record record);
+    Record insertRecord(Record record);
 
     //查询用户的历史记录
     List<Record> findUserAllRecord(Integer userId);
 
     //删除历史记录
-    void delete(Record record);
+    void delete(Integer recordId);
 
     //批量删除历史记录
     void batchDelete(List<Record> record);
