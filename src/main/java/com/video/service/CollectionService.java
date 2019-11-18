@@ -17,4 +17,6 @@ public interface CollectionService {
     public Pagination findCollection(Integer id, Integer page, Integer size);
     //删除个人收藏
     public String deleteCollection(Integer userId,Integer videoId);
+
+    public List<Collection> findAllCollection(Integer userId);
 }

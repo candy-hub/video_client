@@ -41,5 +41,6 @@ public interface VideoService {
     public Video findVideoByVideoId(Integer id);
     //根据userId查询对应的上传视频
     public Pagination findVideoByUserId(Integer id, Integer page, Integer size);
-
+    //根据userId查询
+    public List<Video> findVideoById(Integer id);
 }

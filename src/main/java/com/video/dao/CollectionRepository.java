@@ -21,5 +21,7 @@ public interface CollectionRepository extends JpaRepository<Collection,Integer> 
 
     void deleteByUserIdAndVideoId(Integer userId,Integer videoId);
 
+    List<Collection> findAllByUserId(Integer userId);
+
 
 }
