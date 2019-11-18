@@ -4,8 +4,12 @@ import com.video.dao.CollectionRepository;
 import com.video.dao.VideoRepository;
 import com.video.domain.Collection;
 import com.video.domain.Video;
+import com.video.response.Pagination;
 import com.video.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,9 +31,13 @@ public class CollectionServiceImpl implements CollectionService{
     private VideoRepository videoRepository;
 
     @Override
-    public List<Collection> findCollection(Integer id) {
-        List<Collection> list = collectionRepository.findAllByUserId(id);
-        return list;
+    public Pagination findCollection(Integer id,Integer page,Integer size){
+        Pageable pages= PageRequest.of(page-1,size);
+        Page<Collection> all = collectionRepository.findAllByUserId(id, pages);
+        Pagination res=new Pagination();
+        res.setList(all.getContent());
+        res.setTotal(all.getTotalElements());
+        return res;
     }
 
     @Override

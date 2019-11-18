@@ -1,6 +1,9 @@
 package com.video.dao;
 
+
 import com.video.domain.Video;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -11,5 +14,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Time: 11:49
  */
 public interface VideoRepository extends JpaRepository<Video,Integer> {
-
+    Page<Video>  findAllByUserId(Integer userId, Pageable pageable);
 }

@@ -10,9 +10,9 @@ import java.util.List;
 
 public interface CommentService {
 
-    Comments selectAll();
+    Comments selectAll(int videoId);
 
-    Pagination<Comment> findByPage(Integer commentId,int page,int size);
+    Pagination<Comment> findByPage(Integer commentId,int videoId,int page,int size);
 
     List<Comment> findAll();
 

@@ -20,22 +20,22 @@ public class CommentController {
     private CommentService commentService;
 
     /*查找所有rid==0*/
-    @RequestMapping("/findAllComment")
+   /* @RequestMapping("/findAllComment")
     public List<Comment> findAllComment(){
         return commentService.findAll();
-    }
+    }*/
 
     /*查找所有rid==0*/
-    @RequestMapping("/findAllCom")
-    public Comments findAllCom(){
-        return commentService.selectAll();
+    @RequestMapping("/findAllCom/{videoId}")
+    public Comments findAllCom(@PathVariable int videoId){
+        return commentService.selectAll(videoId);
     }
 
     /*查找所有rid!=0*/
-    @RequestMapping("/findAllComments2")
+    /*@RequestMapping("/findAllComments2")
     public List<Comment> findAllComment2(){
         return commentService.findAll2();
-    }
+    }*/
 
     /*存库*/
     @RequestMapping("/saveComment")

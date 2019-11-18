@@ -57,20 +57,20 @@ public class CommentServiceImpl implements CommentService {
 
     /*主楼*/
     @Override
-    public Comments selectAll() {
+    public Comments selectAll(int videoId) {
         Comments comments=new Comments();
         int commentRid=0;
         Pageable pages=PageRequest.of(0,10);
         List<Pagination> list=new ArrayList<>();
         Pagination pag=new Pagination();
-        Page<Comment> all = commentRepository.findAllByCommentRid(commentRid, pages);
+        Page<Comment> all = commentRepository.findAllByCommentRidAndVideoId(commentRid,videoId, pages);
         pag.setList(all.getContent());
         pag.setTotal(all.getTotalElements());
         comments.setCom(pag);
 
         for (Comment comment:all.getContent()){
             Pagination pagination=new Pagination();
-            Page<Comment> allByCid = commentRepository.findAllByCommentRid(comment.getCommentId(), pages);
+            Page<Comment> allByCid = commentRepository.findAllByCommentRidAndVideoId(comment.getCommentId(), videoId,pages);
             pagination.setList(allByCid.getContent());
             pagination.setTotal(allByCid.getTotalElements());  //总条数
 //            过期时间
@@ -84,10 +84,10 @@ public class CommentServiceImpl implements CommentService {
 
     /*从楼分页  页面显示时记得判断状态码*/
     @Override
-    public Pagination<Comment> findByPage(Integer commentId, int page, int size) {
+    public Pagination<Comment> findByPage(Integer commentId,int videoId, int page, int size) {
         Pageable pages=PageRequest.of(page-1,size);
         Pagination pagination=new Pagination();
-        Page<Comment> allByCid = commentRepository.findAllByCommentId(commentId, pages);
+        Page<Comment> allByCid = commentRepository.findAllByCommentIdAndVideoId(commentId,videoId, pages);
         pagination.setList(allByCid.getContent());
         pagination.setTotal(allByCid.getTotalElements());
         return pagination;
