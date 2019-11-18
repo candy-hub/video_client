@@ -38,7 +38,7 @@ public interface UserService {
     User findAllByUserRechargeVipOrderNumber(String userRechargeVipOrderNumber);//通过VIP订单编号查对象
 
     //新增用户的历史记录
-    void insertRecord(Record record);
+    Record insertRecord(Record record);
 
     //查询用户的历史记录
     List<Record> findUserAllRecord(Integer userId);

@@ -137,8 +137,8 @@ public class UserServiceImpl implements UserService {
     /*用户历史记录*/
 
     @Override
-    public void insertRecord(Record record) {
-        recordRepository.save(record);
+    public Record insertRecord(Record record) {
+        return recordRepository.save(record);
     }
 
     @Override
