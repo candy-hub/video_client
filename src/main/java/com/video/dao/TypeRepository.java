@@ -12,4 +12,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @Time: 15:23
  */
 public interface TypeRepository extends JpaRepository<Type,Integer> {
+
 }
