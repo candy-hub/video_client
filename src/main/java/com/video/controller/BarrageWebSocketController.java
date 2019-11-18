@@ -94,23 +94,7 @@ public class BarrageWebSocketController {
             connection.hget(videoId+"视频弹幕".getBytes("utf-8"), "时间："+msg.getBytes());*/
             Object o = redisTemplate.opsForValue().get("视频弹幕:" + videoId + "时间：" + msg);
             msgList = (List)o;
-            /*if (o!=null) {
-//                T[] targetArray=(T[])o;
-                String[] obj=(String[])o;
-                System.out.println(obj);
-                System.out.println(obj[0]+"======"+obj[1]);
-                Map o1 = (Map) o;
 
-                if (o1.size() > 0) {
-                    *//*把map中值遍历存入集合中*//*
-                    Collection<Object> values = o1.values();
-                    System.out.println(values);  //数组
-                    *//*Iterator<Object> iterator = values.iterator();
-                    while (iterator.hasNext()) {
-                        msgList.add((String) iterator.next());
-                    }*//*
-                }
-            }*/
             System.out.println(msgList);
             socketMsg.setMsgs(msgList);
             if (socketMsg.getType() == 1) {
