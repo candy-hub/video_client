@@ -4,6 +4,7 @@ import com.video.domain.Type;
 import com.video.service.TypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,11 @@ public class TypeController {
     @RequestMapping("/findAllTypes")
     public List<Type> findAllTypes(){
         return typeService.findAllTypes();
+    }
+
+    @RequestMapping("/findTypeById/{id}")
+    public String findTypeById(@PathVariable("id") Integer id){
+        return typeService.findTypeById(id);
     }
 
 }

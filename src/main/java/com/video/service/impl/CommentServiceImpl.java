@@ -60,7 +60,7 @@ public class CommentServiceImpl implements CommentService {
     public Comments selectAll() {
         Comments comments=new Comments();
         int commentRid=0;
-        Pageable pages=PageRequest.of(0,3);
+        Pageable pages=PageRequest.of(0,10);
         List<Pagination> list=new ArrayList<>();
         Pagination pag=new Pagination();
         Page<Comment> all = commentRepository.findAllByCommentRid(commentRid, pages);
