@@ -1,6 +1,8 @@
 package com.video.dao;
 
 import com.video.domain.Collection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -15,7 +17,9 @@ import java.util.List;
 public interface CollectionRepository extends JpaRepository<Collection,Integer> {
     List<Collection> findAllByUserIdAndVideoId(Integer userId,Integer videoId);
 
-    List<Collection> findAllByUserId(Integer userId);
+    Page<Collection> findAllByUserId(Integer userId, Pageable pageable);
 
     void deleteByUserIdAndVideoId(Integer userId,Integer videoId);
+
+
 }
