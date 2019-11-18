@@ -141,6 +141,18 @@ public class UserServiceImpl implements UserService {
         return recordRepository.save(record);
     }
 
+
+
+    @Override
+    public List<Record> findRecordByUserIdAndVideoId(Integer userId, Integer videoId) {
+        return recordRepository.findAllByUserIdAndVideoId(userId,videoId);
+    }
+
+    @Override
+    public Record updateRecord(Record record) {
+        return recordRepository.saveAndFlush(record);
+    }
+
     @Override
     public List<Record> findUserAllRecord(Integer userId) {
         return recordRepository.findAllByUserId(userId);
