@@ -27,7 +27,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @ServerEndpoint(value = "/websocket/{videoId}")
 @Component
-public class WebSocketController {
+public class BarrageWebSocketController {
 
     private int videoId;
 
@@ -36,7 +36,7 @@ public class WebSocketController {
     private RedisTemplate redisTemplate = SpringUtils.getBean("redisTemplates");
 
     //用来存放每个客户端对应的MyWebSocket对象。
-    private static CopyOnWriteArraySet<WebSocketController> webSocketSet = new CopyOnWriteArraySet<WebSocketController>();
+    private static CopyOnWriteArraySet<BarrageWebSocketController> webSocketSet = new CopyOnWriteArraySet<BarrageWebSocketController>();
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     //用来记录sessionId和该session进行绑定
     private static Map<String, Session> map = new HashMap<String, Session>();
@@ -94,23 +94,7 @@ public class WebSocketController {
             connection.hget(videoId+"视频弹幕".getBytes("utf-8"), "时间："+msg.getBytes());*/
             Object o = redisTemplate.opsForValue().get("视频弹幕:" + videoId + "时间：" + msg);
             msgList = (List)o;
-            /*if (o!=null) {
-//                T[] targetArray=(T[])o;
-                String[] obj=(String[])o;
-                System.out.println(obj);
-                System.out.println(obj[0]+"======"+obj[1]);
-                Map o1 = (Map) o;
 
-                if (o1.size() > 0) {
-                    *//*把map中值遍历存入集合中*//*
-                    Collection<Object> values = o1.values();
-                    System.out.println(values);  //数组
-                    *//*Iterator<Object> iterator = values.iterator();
-                    while (iterator.hasNext()) {
-                        msgList.add((String) iterator.next());
-                    }*//*
-                }
-            }*/
             System.out.println(msgList);
             socketMsg.setMsgs(msgList);
             if (socketMsg.getType() == 1) {
