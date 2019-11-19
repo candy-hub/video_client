@@ -3,6 +3,7 @@ package com.video.controller;
 import com.video.domain.Record;
 import com.video.domain.User;
 import com.video.response.LoginResponse;
+import com.video.response.Pagination;
 import com.video.service.UserService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
@@ -144,27 +145,48 @@ public class UserController {
     }
 
     /*查看用户历史记录*/
-    @RequestMapping(value = "/findUserAllRecord/{userId}",method = RequestMethod.POST)
-    public List<Record> findUserAllRecord(@PathVariable("userId") Integer userId){
-        System.out.println("+++++++++++++++++++++++++++++++++++"+userId);
+    @RequestMapping(value = "/findUserAllRecord/{userId}/{page}/{size}",method = RequestMethod.GET)
+    public Pagination findUserAllRecord(@PathVariable("userId") Integer userId, @PathVariable("page") Integer page, @PathVariable("size") Integer size){
+
+        Pagination pagination=new Pagination();
 
         Map<Object, Object> entries = redisTemplate.opsForHash().entries("user"+userId);
         List<Record> records=new LinkedList<Record>();
         if (entries.size()>0){
+            //redis中存在才需要map遍历转list
             Collection<Object> values = entries.values();
             Iterator<Object> iterator = values.iterator();
             while(iterator.hasNext()){
                 records.add((Record) iterator.next());
             }
-            return records;
+            records.sort(new Comparator<Record>() {
+                @Override
+                public int compare(Record o1, Record o2) {
+                    return o2.getRecordId()-o1.getRecordId();
+                }
+            });
+            pagination.setTotal((long)records.size());
+            List<Record> list=new ArrayList<>();
+            for (int i=(page-1)*size;i<page*size;i++){
+                list.add(records.get(i));
+            }
+            System.out.println(list.size());
+            pagination.setList(list);
+            return pagination;
         }else{
             List<Record> all = userService.findUserAllRecord(userId);
+            pagination.setTotal((long)records.size());
             if (all!=null){
-                Map<String, Object> map = new TreeMap<>();
                 for (Record record : all) {
                     redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(),record);
                 }
-                return all;
+                List<Record> list=new ArrayList<>();
+                for (int i=(page-1)*size;i<page*size;i++){
+                    list.add(records.get(i));
+                }
+                System.out.println(list.size());
+                pagination.setList(list);
+                return pagination;
             }else {
                 return null;
             }

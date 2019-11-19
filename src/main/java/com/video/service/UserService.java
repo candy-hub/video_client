@@ -43,6 +43,7 @@ public interface UserService {
     //通过userId和videoId查看一条历史记录
     List<Record> findRecordByUserIdAndVideoId(Integer userId,Integer videoId);
 
+    //修改用户的观看时间
     Record updateRecord(Record record);
 
     //查询用户的历史记录

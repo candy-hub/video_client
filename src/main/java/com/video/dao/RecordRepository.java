@@ -11,8 +11,5 @@ public interface RecordRepository extends JpaRepository<Record,Integer> {
 
     List<Record> findAllByUserId(Integer userId);
 
-
-    //@Query(value="select * from Record where userId:userId and videoId:videoId",nativeQuery = true)
-//    List<Record> findRecordByUserIdAndVideoId(Integer userId,Integer videoId);
     List<Record> findAllByUserIdAndVideoId(Integer userId,Integer videoId);
 }
