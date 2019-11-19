@@ -40,4 +40,11 @@ public class CollectionController {
     public List<Collection> findAllCollection(@PathVariable("userId")Integer userId){
         return collectionService.findAllCollection(userId);
     }
+
+    //删除某个userId对应的收藏总数
+    @RequestMapping("/deleteAllCollection/{userId}")
+    public String deleteAllCollection(@PathVariable("userId")Integer userId){
+        return collectionService.deleteAllCollection(userId);
+    }
+
 }

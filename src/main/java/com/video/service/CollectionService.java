@@ -19,4 +19,6 @@ public interface CollectionService {
     public String deleteCollection(Integer userId,Integer videoId);
 
     public List<Collection> findAllCollection(Integer userId);
+
+    public String deleteAllCollection(Integer userId);
 }

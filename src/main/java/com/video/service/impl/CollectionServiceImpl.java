@@ -59,4 +59,19 @@ public class CollectionServiceImpl implements CollectionService{
         List<Collection> list = collectionRepository.findAllByUserId(userId);
         return list;
     }
+
+    @Override
+    public String deleteAllCollection(Integer userId) {
+        List<Collection> list = collectionRepository.findAllByUserId(userId);
+        for(int i=0;i<list.size();i++){
+            collectionRepository.deleteById(list.get(i).getCollectionId());
+            Video video = videoRepository.findById(list.get(i).getVideoId()).get();
+            Integer videoFavorite = video.getVideoFavorite();
+            int n = videoFavorite.intValue() - 1;
+            Integer favorite = Integer.valueOf(n);
+            video.setVideoFavorite(favorite);
+            videoRepository.save(video);
+        }
+        return "1";
+    }
 }
