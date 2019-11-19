@@ -48,7 +48,7 @@ public class VideoController {
     }
 
     //删除视频
-    @RequestMapping("/deleteVedio/{id}")
+    @RequestMapping("/deleteVideo/{id}")
     public String deleteVideo(@PathVariable("id") Integer id) throws IOException {
         return videoService.deleteVideo(id);
     }
