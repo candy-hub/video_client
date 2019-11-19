@@ -103,18 +103,22 @@ public class UserController {
         return userService.updatePassword(user);
     }
 
-    /*新增用户历史记录*/
-    @RequestMapping(value = "/addRecord",method = RequestMethod.POST)
+    /*新增/修改用户历史记录*/
+    @RequestMapping(value = "/changeRecord",method = RequestMethod.POST)
     public Record addRecord(@RequestBody Record record){
-        Record allRecord = userService.findAllRecord(record.getRecordId());
-        if (allRecord!=null){
-            Record record1 = userService.updateRecord(record);
+        List<Record> all = userService.findRecordByUserIdAndVideoId(record.getUserId(), record.getVideoId());
+        System.out.println(all);
+        if (all!=null){
+            Record record2 = all.get(0);
+            record2.setVideoTime(record.getVideoTime());
+            Record record1 = userService.updateRecord(record2);
             redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
             return record1;
+        }else{
+            Record record2 = userService.insertRecord(record);
+            redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record2);
+            return record2 ;
         }
-        Record record2 = userService.insertRecord(record);
-        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record2);
-        return record2 ;
     }
 
     @RequestMapping(value = "/findRecordByVideoId/{videoId}/{userId}",method = RequestMethod.GET)
@@ -124,18 +128,9 @@ public class UserController {
 
     }
 
-    @RequestMapping(value = "/updateRecord",method = RequestMethod.POST)
-    public Record updateRecord(@RequestBody Record record){
-        System.out.println(record);
-        Record record1 = userService.updateRecord(record);
-        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
-        return record1;
-    }
-
     /*清空用户历史记录*/
     @RequestMapping(value = "/deleteAll/{userId}",method = RequestMethod.GET)
     public String batchDelete(@PathVariable("userId")Integer userId){
-        System.out.println("+++++++++++++++++++++++++++++++++++++++++"+userId);
         List<Record> allRecord = userService.findUserAllRecord(userId);
         for (Record record:allRecord){
             userService.delete(record.getRecordId());
@@ -147,7 +142,6 @@ public class UserController {
     /*删除用户历史记录*/
     @RequestMapping(value = "/deleteRecordByRecordId/{recordId}",method = RequestMethod.GET)
     public String delete(@PathVariable("recordId")Integer recordId){
-        //System.out.println("+++++++++++++++++++++++++++++++++++++++++"+recordId);
         Record record = userService.findAllRecord(recordId);
         userService.delete(recordId);
         redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
