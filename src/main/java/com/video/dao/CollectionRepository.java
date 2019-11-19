@@ -19,7 +19,7 @@ public interface CollectionRepository extends JpaRepository<Collection,Integer> 
 
     Page<Collection> findAllByUserId(Integer userId, Pageable pageable);
 
-    void deleteByUserIdAndVideoId(Integer userId,Integer videoId);
+    void deleteAllByUserIdAndVideoId(Integer userId,Integer videoId);
 
     List<Collection> findAllByUserId(Integer userId);
 

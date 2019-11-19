@@ -42,7 +42,9 @@ public class CollectionServiceImpl implements CollectionService{
 
     @Override
     public String deleteCollection(Integer userId,Integer videoId) {
-        collectionRepository.deleteByUserIdAndVideoId(userId,videoId);
+        List<Collection> list = collectionRepository.findAllByUserIdAndVideoId(userId, videoId);
+        Integer collectionId = list.get(0).getCollectionId();
+        collectionRepository.deleteById(collectionId);
         Video video = videoRepository.findById(videoId).get();
         Integer videoFavorite = video.getVideoFavorite();
         int i = videoFavorite.intValue() - 1;

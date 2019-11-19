@@ -54,7 +54,7 @@ public class UserController {
     @RequestMapping(value = "/sendMail/{userId}",method = RequestMethod.GET)
     public String updateStatus(@PathVariable("userId")Integer userId){
         User user = userService.findByUserId(userId);
-        user.setUserStatue(1);
+        user.setUserStatue(2);
         userService.update(user);
         return "激活成功";
     }

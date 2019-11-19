@@ -144,9 +144,9 @@ public class VideoServiceImpl implements VideoService{
     @Override
     public String deleteVideo(Integer id) throws IOException {
         videoRepository.deleteById(id);
-        DeleteRequest deleteRequest = new DeleteRequest("items-test", "doc", id + "");
+        DeleteRequest deleteRequest = new DeleteRequest("video-test", "doc", id + "");
         DeleteResponse delete = restHighLevelClient.delete(deleteRequest);
-        return "1";
+        return "删除成功！";
     }
 
     @Override
