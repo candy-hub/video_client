@@ -136,6 +136,8 @@ public class UserServiceImpl implements UserService {
 
     /*用户历史记录*/
 
+
+
     @Override
     public Record insertRecord(Record record) {
         return recordRepository.save(record);
@@ -151,6 +153,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Record updateRecord(Record record) {
         return recordRepository.saveAndFlush(record);
+    }
+
+    @Override
+    public Record findAllRecord(Integer recordId) {
+        return recordRepository.findById(recordId).get();
     }
 
     @Override

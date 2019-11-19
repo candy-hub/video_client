@@ -106,9 +106,15 @@ public class UserController {
     /*新增用户历史记录*/
     @RequestMapping(value = "/addRecord",method = RequestMethod.POST)
     public Record addRecord(@RequestBody Record record){
-        Record record1 = userService.insertRecord(record);
-        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
-        return record1 ;
+        Record allRecord = userService.findAllRecord(record.getRecordId());
+        if (allRecord!=null){
+            Record record1 = userService.updateRecord(record);
+            redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
+            return record1;
+        }
+        Record record2 = userService.insertRecord(record);
+        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record2);
+        return record2 ;
     }
 
     @RequestMapping(value = "/findRecordByVideoId/{videoId}/{userId}",method = RequestMethod.GET)
@@ -127,19 +133,23 @@ public class UserController {
     }
 
     /*清空用户历史记录*/
-    @RequestMapping(value = "/deleteAll",method = RequestMethod.POST)
-    public String batchDelete(@RequestBody List<Record> records){
-        for (Record record:records){
+    @RequestMapping(value = "/deleteAll/{userId}",method = RequestMethod.GET)
+    public String batchDelete(@PathVariable("userId")Integer userId){
+        System.out.println("+++++++++++++++++++++++++++++++++++++++++"+userId);
+        List<Record> allRecord = userService.findUserAllRecord(userId);
+        for (Record record:allRecord){
             userService.delete(record.getRecordId());
-            redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
+            redisTemplate.opsForHash().delete("user"+userId,"video"+record.getVideoId());
         }
         return "1";
     }
 
     /*删除用户历史记录*/
-    @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public String delete(@RequestBody Record record){
-        userService.delete(record.getRecordId());
+    @RequestMapping(value = "/deleteRecordByRecordId/{recordId}",method = RequestMethod.GET)
+    public String delete(@PathVariable("recordId")Integer recordId){
+        //System.out.println("+++++++++++++++++++++++++++++++++++++++++"+recordId);
+        Record record = userService.findAllRecord(recordId);
+        userService.delete(recordId);
         redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
         return "1";
     }
@@ -147,7 +157,9 @@ public class UserController {
     /*查看用户历史记录*/
     @RequestMapping(value = "/findUserAllRecord/{userId}/{page}/{size}",method = RequestMethod.GET)
     public Pagination findUserAllRecord(@PathVariable("userId") Integer userId, @PathVariable("page") Integer page, @PathVariable("size") Integer size){
-
+        if (page<1){
+            page=1;
+        }
         Pagination pagination=new Pagination();
 
         Map<Object, Object> entries = redisTemplate.opsForHash().entries("user"+userId);
@@ -167,10 +179,10 @@ public class UserController {
             });
             pagination.setTotal((long)records.size());
             List<Record> list=new ArrayList<>();
-            for (int i=(page-1)*size;i<page*size;i++){
+            for (int i=(page-1)*size;i<page*size &&i<records.size();i++){
                 list.add(records.get(i));
             }
-            System.out.println(list.size());
+            //System.out.println(list.size());
             pagination.setList(list);
             return pagination;
         }else{

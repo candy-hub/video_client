@@ -11,5 +11,7 @@ public interface RecordRepository extends JpaRepository<Record,Integer> {
 
     List<Record> findAllByUserId(Integer userId);
 
+
+
     List<Record> findAllByUserIdAndVideoId(Integer userId,Integer videoId);
 }
