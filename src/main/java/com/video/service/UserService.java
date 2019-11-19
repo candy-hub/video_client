@@ -46,6 +46,9 @@ public interface UserService {
     //修改用户的观看时间
     Record updateRecord(Record record);
 
+    //通过RecordId查一条历史记录
+    Record findAllRecord(Integer recordId);
+
     //查询用户的历史记录
     List<Record> findUserAllRecord(Integer userId);
 
