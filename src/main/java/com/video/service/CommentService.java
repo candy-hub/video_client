@@ -10,13 +10,13 @@ import java.util.List;
 
 public interface CommentService {
 
-    Comments selectAll(int videoId);
+    Comments selectAll(int videoId,int page, int size);
 
-    Pagination<Comment> findByPage(Integer commentId,int videoId,int page,int size);
+    List<Comment> findByPage(Integer commentId,Integer videoId);
 
-    List<Comment> findAll();
+  /*  List<Comment> findAll();
 
-    List<Comment> findAll2();
+    List<Comment> findAll2();*/
 
 //    List<Comment> findAll2(Integer commentId);
 

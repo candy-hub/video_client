@@ -50,14 +50,14 @@ public class BarrageWebSocketController {
         this.session = session;
         this.videoId = videoId;
         /*session中是WebSocket建立连接存储的系列信息，其中包含建立连接时的频道号，属自动行为*/
-        map.put(session.getId(), session);
+        map.put(videoId+"", session);
         webSocketSet.add(this);//加入set中
         System.out.println("有新连接加入:" + videoId + ",当前在线人数为" + webSocketSet.size());
         //this.session.getAsyncRemote().sendText("恭喜" + nickname + "成功连接上WebSocket(其频道号：" + session.getId() + ")-->当前在线人数为：" + webSocketSet.size());
         message.put("type",0); //消息类型，0-连接成功，1-用户消息
         message.put("people",webSocketSet.size()); //在线人数
         message.put("name",videoId); //昵称
-        message.put("aisle",session.getId()); //message.put("aisle",session.getId());频道号
+        message.put("aisle",videoId); //message.put("aisle",session.getId());频道号
         this.session.getAsyncRemote().sendText(new Gson().toJson(message));
     }
 
@@ -89,17 +89,37 @@ public class BarrageWebSocketController {
 
         try {
             socketMsg = objectMapper.readValue(message, SocketMsg.class);
-            String msg = socketMsg.getMsg();
+
          /*   RedisConnection connection = jedisConnectionFactory.getConnection();
             connection.hget(videoId+"视频弹幕".getBytes("utf-8"), "时间："+msg.getBytes());*/
-            Object o = redisTemplate.opsForValue().get("视频弹幕:" + videoId + "时间：" + msg);
-            msgList = (List)o;
 
-            System.out.println(msgList);
-            socketMsg.setMsgs(msgList);
-            if (socketMsg.getType() == 1) {
+            if (socketMsg.getType() == 2) {   //弹幕
+                String msg = socketMsg.getMsg();
+                Object o = redisTemplate.opsForValue().get("视频弹幕:" + videoId + "时间：" + msg);
+                msgList = (List)o;
+
+                System.out.println(msgList);
+                socketMsg.setMsgs(msgList);
                 //单聊.需要找到发送者和接受者.
-                socketMsg.setFromUser(session.getId());//发送者.
+                socketMsg.setFromUser(videoId+"");//发送者.
+                Session fromSession = map.get(socketMsg.getFromUser());
+                Session toSession = map.get(socketMsg.getToUser());
+                //发送给接受者.
+                if (toSession != null) {
+                    //发送给发送者.
+                    Map<String,Object> m=new HashMap<String, Object>();
+                    m.put("type",2);
+                    m.put("name",videoId);
+                    m.put("msg",socketMsg.getMsgs());
+//                    fromSession.getAsyncRemote().sendText(new Gson().toJson(m));
+                    toSession.getAsyncRemote().sendText(new Gson().toJson(m));
+                } else {
+                    //发送给发送者.
+                    fromSession.getAsyncRemote().sendText("系统消息：对方不在线或者您输入的频道号不对");
+                }
+            }else  if (socketMsg.getType() == 1) {  //私聊
+                //单聊.需要找到发送者和接受者.
+                socketMsg.setFromUser(videoId+"");//发送者.
                 Session fromSession = map.get(socketMsg.getFromUser());
                 Session toSession = map.get(socketMsg.getToUser());
                 //发送给接受者.
@@ -108,8 +128,8 @@ public class BarrageWebSocketController {
                     Map<String,Object> m=new HashMap<String, Object>();
                     m.put("type",1);
                     m.put("name",videoId);
-                    m.put("msg",socketMsg.getMsgs());
-//                    fromSession.getAsyncRemote().sendText(new Gson().toJson(m));
+                    m.put("msg",socketMsg.getMsg());
+                    fromSession.getAsyncRemote().sendText(new Gson().toJson(m));
                     toSession.getAsyncRemote().sendText(new Gson().toJson(m));
                 } else {
                     //发送给发送者.
