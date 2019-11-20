@@ -3,6 +3,7 @@ package com.video.service;
 
 import com.video.domain.Collection;
 import com.video.domain.Video;
+import com.video.response.Pagination;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -38,5 +39,8 @@ public interface VideoService {
     public String like(Integer id);
     //根据id查视频
     public Video findVideoByVideoId(Integer id);
-
+    //根据userId查询对应的上传视频
+    public Pagination findVideoByUserId(Integer id, Integer page, Integer size);
+    //根据userId查询
+    public List<Video> findVideoById(Integer id);
 }

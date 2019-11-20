@@ -4,6 +4,7 @@ import com.video.dao.CollectionRepository;
 import com.video.dao.VideoRepository;
 import com.video.domain.Collection;
 import com.video.domain.Video;
+import com.video.response.Pagination;
 import com.video.service.VideoService;
 import com.video.utils.EsUtils;
 import com.video.utils.OssDownloadUtils;
@@ -22,6 +23,9 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -140,9 +144,9 @@ public class VideoServiceImpl implements VideoService{
     @Override
     public String deleteVideo(Integer id) throws IOException {
         videoRepository.deleteById(id);
-        DeleteRequest deleteRequest = new DeleteRequest("items-test", "doc", id + "");
+        DeleteRequest deleteRequest = new DeleteRequest("video-test", "doc", id + "");
         DeleteResponse delete = restHighLevelClient.delete(deleteRequest);
-        return "1";
+        return "删除成功！";
     }
 
     @Override
@@ -200,6 +204,7 @@ public class VideoServiceImpl implements VideoService{
         searchRequest.types("doc");
         //搜索源构建对象
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.size(100);
         if(searchName.equals("null")){
             searchSourceBuilder.query(QueryBuilders.matchAllQuery());
             searchRequest.source(searchSourceBuilder);
@@ -262,6 +267,22 @@ public class VideoServiceImpl implements VideoService{
     public Video findVideoByVideoId(Integer id) {
         Video video = videoRepository.findById(id).get();
         return video;
+    }
+
+    @Override
+    public Pagination findVideoByUserId(Integer id, Integer page, Integer size) {
+        Pageable pages = PageRequest.of(page - 1, size);
+        Page<Video> all = videoRepository.findAllByUserId(id, pages);
+        Pagination res = new Pagination();
+        res.setList(all.getContent());
+        res.setTotal(all.getTotalElements());
+        return res;
+    }
+
+    @Override
+    public List<Video> findVideoById(Integer id) {
+        List<Video> list = videoRepository.findAllByUserId(id);
+        return list;
     }
 }
 

@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -30,6 +31,6 @@ public class Record implements Serializable {
     private String videoUrl;//视频地址
 
     @Column(name = "idx_video_time")
-    private Integer videoTime;//视频播放时间
+    private BigDecimal videoTime;//视频播放时间
 
 }

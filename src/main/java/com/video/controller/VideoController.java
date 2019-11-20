@@ -2,6 +2,7 @@ package com.video.controller;
 
 import com.video.domain.Collection;
 import com.video.domain.Video;
+import com.video.response.Pagination;
 import com.video.service.VideoService;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
@@ -47,7 +48,7 @@ public class VideoController {
     }
 
     //删除视频
-    @RequestMapping("/deleteVedio/{id}")
+    @RequestMapping("/deleteVideo/{id}")
     public String deleteVideo(@PathVariable("id") Integer id) throws IOException {
         return videoService.deleteVideo(id);
     }
@@ -88,4 +89,15 @@ public class VideoController {
         return videoService.findVideoByVideoId(id);
     }
 
+    //根据userId查询对应的上传视频
+    @RequestMapping("/findVideoByUserId/{userId}/{page}/{size}")
+    public Pagination findVideoByUserId(@PathVariable("userId")Integer id, @PathVariable("page") Integer page, @PathVariable("size") Integer size){
+        return videoService.findVideoByUserId(id,page,size);
+    }
+
+    //根据userId查询
+    @RequestMapping("/findVideoById/{userId}")
+    public List<Video> findVideoById(@PathVariable("userId")Integer id){
+        return videoService.findVideoById(id);
+    }
 }

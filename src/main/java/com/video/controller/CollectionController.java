@@ -1,6 +1,7 @@
 package com.video.controller;
 
 import com.video.domain.Collection;
+import com.video.response.Pagination;
 import com.video.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,9 +24,9 @@ public class CollectionController {
     private CollectionService collectionService;
 
     //查询个人收藏
-    @RequestMapping("/findCollection/{userId}")
-    public List<Collection> findCollection(@PathVariable("userId")Integer id){
-        return collectionService.findCollection(id);
+    @RequestMapping("/findCollection/{userId}/{page}/{size}")
+    public Pagination findCollection(@PathVariable("userId")Integer id, @PathVariable("page") Integer page, @PathVariable("size") Integer size){
+        return collectionService.findCollection(id,page,size);
     }
 
     //删除个人收藏
@@ -33,4 +34,17 @@ public class CollectionController {
     public String deleteCollection(@PathVariable("userId")Integer userId,@PathVariable("videoId")Integer videoId){
         return collectionService.deleteCollection(userId,videoId);
     }
+
+    //查询个人收藏总数
+    @RequestMapping("/findAllCollection/{userId}")
+    public List<Collection> findAllCollection(@PathVariable("userId")Integer userId){
+        return collectionService.findAllCollection(userId);
+    }
+
+    //删除某个userId对应的收藏总数
+    @RequestMapping("/deleteAllCollection/{userId}")
+    public String deleteAllCollection(@PathVariable("userId")Integer userId){
+        return collectionService.deleteAllCollection(userId);
+    }
+
 }

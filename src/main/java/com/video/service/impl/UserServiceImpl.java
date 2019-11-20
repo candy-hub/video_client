@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
             return "用户名不存在";
         }else if (all.size()==1) {
             String pass= md5Utils.getPassword(all.get(0).getUserName(), loginResponse.getPassword());
-            if (all.get(0).getUserStatue()==1){
+            if (all.get(0).getUserStatue()==1||all.get(0).getUserStatue()==2){
                 if (all.get(0).getUserPassword().equals(pass)) {
                     return "success";
                 }
@@ -136,9 +136,28 @@ public class UserServiceImpl implements UserService {
 
     /*用户历史记录*/
 
+
+
     @Override
     public Record insertRecord(Record record) {
         return recordRepository.save(record);
+    }
+
+
+
+    @Override
+    public List<Record> findRecordByUserIdAndVideoId(Integer userId, Integer videoId) {
+        return recordRepository.findAllByUserIdAndVideoId(userId,videoId);
+    }
+
+    @Override
+    public Record updateRecord(Record record) {
+        return recordRepository.saveAndFlush(record);
+    }
+
+    @Override
+    public Record findAllRecord(Integer recordId) {
+        return recordRepository.findById(recordId).get();
     }
 
     @Override

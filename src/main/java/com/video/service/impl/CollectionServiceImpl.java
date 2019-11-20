@@ -4,8 +4,12 @@ import com.video.dao.CollectionRepository;
 import com.video.dao.VideoRepository;
 import com.video.domain.Collection;
 import com.video.domain.Video;
+import com.video.response.Pagination;
 import com.video.service.CollectionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,20 +31,47 @@ public class CollectionServiceImpl implements CollectionService{
     private VideoRepository videoRepository;
 
     @Override
-    public List<Collection> findCollection(Integer id) {
-        List<Collection> list = collectionRepository.findAllByUserId(id);
-        return list;
+    public Pagination findCollection(Integer id,Integer page,Integer size){
+        Pageable pages= PageRequest.of(page-1,size);
+        Page<Collection> all = collectionRepository.findAllByUserId(id, pages);
+        Pagination res=new Pagination();
+        res.setList(all.getContent());
+        res.setTotal(all.getTotalElements());
+        return res;
     }
 
     @Override
     public String deleteCollection(Integer userId,Integer videoId) {
-        collectionRepository.deleteByUserIdAndVideoId(userId,videoId);
+        List<Collection> list = collectionRepository.findAllByUserIdAndVideoId(userId, videoId);
+        Integer collectionId = list.get(0).getCollectionId();
+        collectionRepository.deleteById(collectionId);
         Video video = videoRepository.findById(videoId).get();
         Integer videoFavorite = video.getVideoFavorite();
         int i = videoFavorite.intValue() - 1;
         Integer favorite = Integer.valueOf(i);
         video.setVideoFavorite(favorite);
         videoRepository.save(video);
+        return "1";
+    }
+
+    @Override
+    public List<Collection> findAllCollection(Integer userId) {
+        List<Collection> list = collectionRepository.findAllByUserId(userId);
+        return list;
+    }
+
+    @Override
+    public String deleteAllCollection(Integer userId) {
+        List<Collection> list = collectionRepository.findAllByUserId(userId);
+        for(int i=0;i<list.size();i++){
+            collectionRepository.deleteById(list.get(i).getCollectionId());
+            Video video = videoRepository.findById(list.get(i).getVideoId()).get();
+            Integer videoFavorite = video.getVideoFavorite();
+            int n = videoFavorite.intValue() - 1;
+            Integer favorite = Integer.valueOf(n);
+            video.setVideoFavorite(favorite);
+            videoRepository.save(video);
+        }
         return "1";
     }
 }

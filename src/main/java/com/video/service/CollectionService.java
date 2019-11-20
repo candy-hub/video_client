@@ -1,6 +1,7 @@
 package com.video.service;
 
 import com.video.domain.Collection;
+import com.video.response.Pagination;
 
 import java.util.List;
 
@@ -13,7 +14,11 @@ import java.util.List;
  */
 public interface CollectionService {
     //查询个人收藏
-    public List<Collection> findCollection(Integer id);
+    public Pagination findCollection(Integer id, Integer page, Integer size);
     //删除个人收藏
     public String deleteCollection(Integer userId,Integer videoId);
+
+    public List<Collection> findAllCollection(Integer userId);
+
+    public String deleteAllCollection(Integer userId);
 }

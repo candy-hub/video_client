@@ -3,6 +3,7 @@ package com.video.controller;
 import com.video.domain.Record;
 import com.video.domain.User;
 import com.video.response.LoginResponse;
+import com.video.response.Pagination;
 import com.video.service.UserService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 
 @RestController
@@ -52,7 +54,7 @@ public class UserController {
     @RequestMapping(value = "/sendMail/{userId}",method = RequestMethod.GET)
     public String updateStatus(@PathVariable("userId")Integer userId){
         User user = userService.findByUserId(userId);
-        user.setUserStatue(1);
+        user.setUserStatue(2);
         userService.update(user);
         return "激活成功";
     }
@@ -101,54 +103,96 @@ public class UserController {
         return userService.updatePassword(user);
     }
 
-    /*新增用户历史记录*/
-    @RequestMapping(value = "/addRecord",method = RequestMethod.POST)
+    /*新增/修改用户历史记录*/
+    @RequestMapping(value = "/changeRecord",method = RequestMethod.POST)
     public Record addRecord(@RequestBody Record record){
-        Record record1 = userService.insertRecord(record);
-        redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
-        return record1 ;
+        List<Record> all = userService.findRecordByUserIdAndVideoId(record.getUserId(), record.getVideoId());
+        System.out.println(all);
+        if (all!=null){
+            Record record2 = all.get(0);
+            record2.setVideoTime(record.getVideoTime());
+            Record record1 = userService.updateRecord(record2);
+            redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
+            return record1;
+        }else{
+            Record record2 = userService.insertRecord(record);
+            redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record2);
+            return record2 ;
+        }
+    }
+
+    @RequestMapping(value = "/findRecordByVideoId/{videoId}/{userId}",method = RequestMethod.GET)
+    public List<Record> findRecordByVideoId(@PathVariable("videoId")Integer videoId,@PathVariable("userId")Integer userId){
+        List<Record> all = userService.findRecordByUserIdAndVideoId(userId, videoId);
+        return all;
+
     }
 
     /*清空用户历史记录*/
-    @RequestMapping(value = "/deleteAll",method = RequestMethod.POST)
-    public String batchDelete(@RequestBody List<Record> records){
-        for (Record record:records){
+    @RequestMapping(value = "/deleteAll/{userId}",method = RequestMethod.GET)
+    public String batchDelete(@PathVariable("userId")Integer userId){
+        List<Record> allRecord = userService.findUserAllRecord(userId);
+        for (Record record:allRecord){
             userService.delete(record.getRecordId());
-            redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
+            redisTemplate.opsForHash().delete("user"+userId,"video"+record.getVideoId());
         }
         return "1";
     }
 
     /*删除用户历史记录*/
-    @RequestMapping(value = "/delete",method = RequestMethod.POST)
-    public String delete(@RequestBody Record record){
-        userService.delete(record.getRecordId());
+    @RequestMapping(value = "/deleteRecordByRecordId/{recordId}",method = RequestMethod.GET)
+    public String delete(@PathVariable("recordId")Integer recordId){
+        Record record = userService.findAllRecord(recordId);
+        userService.delete(recordId);
         redisTemplate.opsForHash().delete("user"+record.getUserId(), "video"+record.getVideoId());
         return "1";
     }
 
     /*查看用户历史记录*/
-    @RequestMapping(value = "/findUserAllRecord/{userId}",method = RequestMethod.POST)
-    public List<Record> findUserAllRecord(@PathVariable("userId") Integer userId){
-        System.out.println("+++++++++++++++++++++++++++++++++++"+userId);
+    @RequestMapping(value = "/findUserAllRecord/{userId}/{page}/{size}",method = RequestMethod.GET)
+    public Pagination findUserAllRecord(@PathVariable("userId") Integer userId, @PathVariable("page") Integer page, @PathVariable("size") Integer size){
+        if (page<1){
+            page=1;
+        }
+        Pagination pagination=new Pagination();
 
         Map<Object, Object> entries = redisTemplate.opsForHash().entries("user"+userId);
         List<Record> records=new LinkedList<Record>();
         if (entries.size()>0){
+            //redis中存在才需要map遍历转list
             Collection<Object> values = entries.values();
             Iterator<Object> iterator = values.iterator();
             while(iterator.hasNext()){
                 records.add((Record) iterator.next());
             }
-            return records;
+            records.sort(new Comparator<Record>() {
+                @Override
+                public int compare(Record o1, Record o2) {
+                    return o2.getRecordId()-o1.getRecordId();
+                }
+            });
+            pagination.setTotal((long)records.size());
+            List<Record> list=new ArrayList<>();
+            for (int i=(page-1)*size;i<page*size &&i<records.size();i++){
+                list.add(records.get(i));
+            }
+            //System.out.println(list.size());
+            pagination.setList(list);
+            return pagination;
         }else{
             List<Record> all = userService.findUserAllRecord(userId);
+            pagination.setTotal((long)records.size());
             if (all!=null){
-                Map<String, Object> map = new TreeMap<>();
                 for (Record record : all) {
                     redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(),record);
                 }
-                return all;
+                List<Record> list=new ArrayList<>();
+                for (int i=(page-1)*size;i<page*size;i++){
+                    list.add(records.get(i));
+                }
+                System.out.println(list.size());
+                pagination.setList(list);
+                return pagination;
             }else {
                 return null;
             }
