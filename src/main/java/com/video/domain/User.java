@@ -55,5 +55,8 @@ public class User {
 
     @Column(name = "idx_user_recharge_vip")
     private String userRechargeVipOrderNumber;//用户充值会员订单编号
+
+    @Column(name = "idx_user_code")
+    private String userCode;
     
 }
