@@ -212,4 +212,10 @@ public class UserServiceImpl implements UserService {
         }
 
     }
+
+    @Override
+    public User findUserByTel(String tel) {
+        User user = userRepository.findAllByUserTell(tel);
+        return user;
+    }
 }

@@ -247,7 +247,14 @@ public class UserController {
     //验证手机验证码
     @RequestMapping("/checkCode/{code}/{tel}")
     public String checkCode(@PathVariable("code") String code,@PathVariable("tel") String tel){
-        return "";
+        return userService.checkCode(code, tel);
     }
+
+    //根据手机号查user对象
+    @RequestMapping("/findUserByTel/{tel}")
+    public User findUserByTel(@PathVariable("tel") String tel){
+        return userService.findUserByTel(tel);
+    }
+
 
 }

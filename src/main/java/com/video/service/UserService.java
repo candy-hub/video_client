@@ -70,4 +70,6 @@ public interface UserService {
 
     public String checkCode(String code,String tel);
 
+    public User findUserByTel(String tel);
+
 }
