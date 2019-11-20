@@ -201,5 +201,15 @@ public class UserServiceImpl implements UserService {
         userRepository.saveAndFlush(user);
     }
 
+    @Override
+    public String checkCode(String code,String tel) {
+        User user = userRepository.findAllByUserTell(tel);
+        String userCode = user.getUserCode();
+        if(code.equals(userCode)){
+            return "1";
+        }else{
+            return "0";
+        }
 
+    }
 }

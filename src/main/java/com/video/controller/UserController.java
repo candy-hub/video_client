@@ -1,5 +1,6 @@
 package com.video.controller;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.video.domain.Record;
 import com.video.domain.User;
 import com.video.response.LoginResponse;
@@ -7,6 +8,7 @@ import com.video.response.Pagination;
 import com.video.service.UserService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
+import com.video.utils.TelUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +28,9 @@ public class UserController {
 
     @Resource
     EmailUtils emailUtils;
+
+    @Resource
+    TelUtils telUtils;
 
     @Resource(name = "redisTemplates")
     RedisTemplate redisTemplate;
@@ -222,4 +227,27 @@ public class UserController {
         userService.updateUserStatue(userId);
         return "修改成功";
     }
+
+    //获取忘记密码的验证码
+    @RequestMapping("/getCode/{tel}")
+    public String getCode(@PathVariable("tel") String tel){
+        try {
+            String code = telUtils.sendCode(tel);
+            if("success".equals(code)){
+                return "1";
+            }else {
+                return "0";
+            }
+        } catch (ClientException e) {
+            e.printStackTrace();
+        }
+       return null;
+    }
+
+    //验证手机验证码
+    @RequestMapping("/checkCode/{code}/{tel}")
+    public String checkCode(@PathVariable("code") String code,@PathVariable("tel") String tel){
+        return "";
+    }
+
 }
