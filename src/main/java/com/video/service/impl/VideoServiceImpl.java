@@ -314,7 +314,18 @@ public class VideoServiceImpl implements VideoService{
             }
             return videos;
         } else {
-            return null;
+            //按收藏量
+            List<Video> all = videoRepository.findAllByTypeId(typeId);
+            all.sort(new Comparator<Video>() {
+                @Override
+                public int compare(Video o1, Video o2) {
+                    return o2.getVideoFavorite()-o1.getVideoFavorite();
+                }
+            });
+            if (all.size()>8){
+                return all.subList(0,8);
+            }
+            return all;
         }
     }
 
