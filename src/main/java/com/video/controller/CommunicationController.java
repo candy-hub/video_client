@@ -16,11 +16,13 @@ public class CommunicationController {
     @Autowired
     private CommunicationService communicationService;
 
+//    存储交互信息
     @RequestMapping("/saveUserMsg")
     public Communication save(@RequestParam Communication communication){
         return communicationService.save(communication);
     }
 
+    //查找与该用户进行过信息交互的某个用户
     @RequestMapping("/findAllUserMsg/{userId}/{userRid}")
     public List<Communication> findAll(@PathVariable("userId") Integer userId, @PathVariable("userRid") Integer userRid){
         return communicationService.findAll(userId,userRid);

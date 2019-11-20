@@ -14,6 +14,8 @@ public interface CommentRepository extends JpaRepository<Comment,Integer> {
     Page<Comment> findAllByCommentIdAndVideoId(Integer commentId,Integer videoId, Pageable pageable);  //从楼查询
    //Page<Comment> findAllByCid(Pageable pageable,Integer commentId);
 
+    List<Comment> findAllByCommentRidAndVideoId(Integer commentId,Integer videoId);
+
     Page<Comment> findAllByCommentRidAndVideoId(Integer commentRid,Integer videoId, Pageable pageable);  //主楼查询，固定rid=0
 
 }

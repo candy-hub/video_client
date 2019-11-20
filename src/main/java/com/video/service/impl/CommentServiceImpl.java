@@ -1,6 +1,6 @@
 package com.video.service.impl;
 
-import com.video.dao.CommentDao;
+//import com.video.dao.CommentDao;
 import com.video.dao.CommentRepository;
 import com.video.domain.Comment;
 import com.video.response.Comments;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -23,8 +24,8 @@ public class CommentServiceImpl implements CommentService {
     @Resource
     private CommentRepository commentRepository;
 
-    @Resource
-    private CommentDao commentDao;
+    /*@Resource
+    private CommentDao commentDao;*/
 
     @Resource
     private RedisTemplate redisTemplate;
@@ -57,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
 
     /*主楼*/
     @Override
-    public Comments selectAll(int videoId) {
+    public Comments selectAll(int videoId, int page, int size) {
         Comments comments=new Comments();
         int commentRid=0;
         Pageable pages=PageRequest.of(0,10);
@@ -69,8 +70,9 @@ public class CommentServiceImpl implements CommentService {
         comments.setCom(pag);
 
         for (Comment comment:all.getContent()){
+            Pageable p=PageRequest.of(0,3);
             Pagination pagination=new Pagination();
-            Page<Comment> allByCid = commentRepository.findAllByCommentRidAndVideoId(comment.getCommentId(), videoId,pages);
+            Page<Comment> allByCid = commentRepository.findAllByCommentRidAndVideoId(comment.getCommentId(), videoId,p);
             pagination.setList(allByCid.getContent());
             pagination.setTotal(allByCid.getTotalElements());  //总条数
 //            过期时间
@@ -84,16 +86,18 @@ public class CommentServiceImpl implements CommentService {
 
     /*从楼分页  页面显示时记得判断状态码*/
     @Override
-    public Pagination<Comment> findByPage(Integer commentId,int videoId, int page, int size) {
-        Pageable pages=PageRequest.of(page-1,size);
-        Pagination pagination=new Pagination();
-        Page<Comment> allByCid = commentRepository.findAllByCommentIdAndVideoId(commentId,videoId, pages);
-        pagination.setList(allByCid.getContent());
-        pagination.setTotal(allByCid.getTotalElements());
-        return pagination;
+    public List<Comment> findByPage(Integer commentId,Integer videoId) {
+        List<Comment> all = commentRepository.findAllByCommentRidAndVideoId(commentId, videoId);
+        all.sort(new Comparator<Comment>() {
+            @Override
+            public int compare(Comment o1, Comment o2) {
+                return o2.getCommentId()-o1.getCommentId();
+            }
+        });
+        return all;
     }
 
-    @Override
+    /*@Override
     public List<Comment> findAll() {
         return commentDao.findAllByRid();
     }
@@ -101,7 +105,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> findAll2() {
         return commentDao.findAllByRid2();
-    }
+    }*/
 
     @Override
     public Comment save(Comment comment) {

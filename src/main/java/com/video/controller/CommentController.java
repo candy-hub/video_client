@@ -28,14 +28,14 @@ public class CommentController {
     /*查找所有rid==0*/
     @RequestMapping("/findAllCom/{videoId}")
     public Comments findAllCom(@PathVariable int videoId){
-        return commentService.selectAll(videoId);
+        return commentService.selectAll(videoId,1,10);
     }
 
     /*查找所有rid!=0*/
-    /*@RequestMapping("/findAllComments2")
-    public List<Comment> findAllComment2(){
-        return commentService.findAll2();
-    }*/
+    @RequestMapping("/searchComment/{commentId}/{videoId}")
+    public List<Comment> searchComment(@PathVariable int commentId,@PathVariable int videoId){
+        return commentService.findByPage(commentId,videoId);
+    }
 
     /*存库*/
     @RequestMapping("/saveComment")
