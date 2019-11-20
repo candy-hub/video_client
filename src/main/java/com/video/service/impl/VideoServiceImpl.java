@@ -150,24 +150,29 @@ public class VideoServiceImpl implements VideoService{
     }
 
     @Override
-    public String download(Video video) {
-        String name = video.getVideoObjectName();
-        try {
-            String s = ossDownloadUtils.downLoad(name);
-            if(s.equals(0)){
-                //失败返回0
-                return "0";
-            }else{
-                //获取当前视频的下载量
-                Integer videoDownload = video.getVideoDownload();
-                int i = videoDownload.intValue() + 1;
-                Integer down = Integer.valueOf(i);
-                video.setVideoDownload(down);
-                videoRepository.save(video);
-                return "1";
+    public String download(Integer id) {
+        Optional<Video> byId = videoRepository.findById(id);
+        if(byId!=null) {
+            Video video = byId.get();
+             String name = video.getVideoObjectName();
+            System.out.println("===========" + name);
+            try {
+                String s = ossDownloadUtils.downLoad(name);
+                if (s.equals(0)) {
+                    //失败返回0
+                    return "0";
+                } else {
+                    //获取当前视频的下载量
+                    Integer videoDownload = video.getVideoDownload();
+                    int i = videoDownload.intValue() + 1;
+                    Integer down = Integer.valueOf(i);
+                    video.setVideoDownload(down);
+                    videoRepository.save(video);
+                    return "1";
+                }
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
             }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
         }
         return null;
     }

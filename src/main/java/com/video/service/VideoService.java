@@ -28,7 +28,7 @@ public interface VideoService {
     //删除视频
     public String deleteVideo(Integer id) throws IOException;
     //视频下载
-    public String download(Video video);
+    public String download(Integer id);
     //导入es库
     public String im() throws IOException;
     //模糊查询
