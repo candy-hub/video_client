@@ -54,9 +54,9 @@ public class VideoController {
     }
 
     //下载视频
-    @RequestMapping("/download")
-    public String downloadVideo(@RequestBody Video video){
-        return videoService.download(video);
+    @RequestMapping("/download/{videoId}")
+    public String downloadVideo(@PathVariable("videoId") Integer id){
+        return videoService.download(id);
     }
 
     //导入es库
