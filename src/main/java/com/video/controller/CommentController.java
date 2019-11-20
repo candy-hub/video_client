@@ -26,9 +26,9 @@ public class CommentController {
     }*/
 
     /*查找所有rid==0*/
-    @RequestMapping("/findAllCom/{videoId}")
-    public Comments findAllCom(@PathVariable int videoId){
-        return commentService.selectAll(videoId,1,10);
+    @RequestMapping("/findAllCom/{videoId}/{page}/{size}")
+    public Comments findAllCom(@PathVariable int videoId,@PathVariable int page,@PathVariable int size){
+        return commentService.selectAll(videoId,page,size);
     }
 
     /*查找所有rid!=0*/

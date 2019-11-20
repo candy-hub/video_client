@@ -61,7 +61,7 @@ public class CommentServiceImpl implements CommentService {
     public Comments selectAll(int videoId, int page, int size) {
         Comments comments=new Comments();
         int commentRid=0;
-        Pageable pages=PageRequest.of(0,10);
+        Pageable pages=PageRequest.of(page-1,size);
         List<Pagination> list=new ArrayList<>();
         Pagination pag=new Pagination();
         Page<Comment> all = commentRepository.findAllByCommentRidAndVideoId(commentRid,videoId, pages);
