@@ -6,10 +6,7 @@ import com.video.domain.Collection;
 import com.video.domain.Video;
 import com.video.response.Pagination;
 import com.video.service.VideoService;
-import com.video.utils.EsUtils;
-import com.video.utils.OssDownloadUtils;
-import com.video.utils.OssUploadUtils;
-import com.video.utils.QiniuUploadUtils;
+import com.video.utils.*;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -26,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,6 +66,8 @@ public class VideoServiceImpl implements VideoService{
     private CollectionRepository collectionRepository;
 
     private static String objectName;
+
+    private RedisTemplate redisTemplate = SpringUtils.getBean("redisTemplates");
 
 
     @Override
@@ -288,6 +288,55 @@ public class VideoServiceImpl implements VideoService{
     public List<Video> findVideoById(Integer id) {
         List<Video> list = videoRepository.findAllByUserId(id);
         return list;
+    }
+
+    @Override
+    public List<Video> findByTrend(int typeId) {
+        Map entries = redisTemplate.opsForHash().entries(typeId + "动态");
+
+        List<Video> videos = new LinkedList<Video>();
+        if (entries.size() > 0) {
+            /*把map中值遍历存入集合中*/
+            java.util.Collection<Object> values = entries.values();
+            Iterator<Object> iterator = values.iterator();
+            while (iterator.hasNext()) {
+                videos.add((Video) iterator.next());
+            }
+            videos.sort(new Comparator<Video>() {
+                @Override
+                public int compare(Video o1, Video o2) {
+                    return o2.getVideoUptime().compareTo(o1.getVideoUptime());
+                }
+            });
+            redisTemplate.opsForHash().delete(typeId + "动态");
+            if (videos.size()>8){
+                return videos.subList(0,8);
+            }
+            return videos;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public int findTrendCount(int typeId) {
+        Map entries = redisTemplate.opsForHash().entries(typeId + "动态");
+        return entries.size();
+    }
+
+    @Override
+    public List<Video> findByLatest(int typeId) {
+        List<Video> all = videoRepository.findAllByTypeId(typeId);
+        all.sort(new Comparator<Video>() {
+            @Override
+            public int compare(Video o1, Video o2) {
+                return o2.getVideoUptime().compareTo(o1.getVideoUptime());
+            }
+        });
+        if (all.size()>8){
+            return all.subList(0,8);
+        }
+        return all;
     }
 }
 

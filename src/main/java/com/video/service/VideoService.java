@@ -43,4 +43,10 @@ public interface VideoService {
     public Pagination findVideoByUserId(Integer id, Integer page, Integer size);
     //根据userId查询
     public List<Video> findVideoById(Integer id);
+
+    List<Video> findByTrend(int typeId);
+
+    int findTrendCount(int typeId);
+
+    List<Video> findByLatest(int typeId);
 }

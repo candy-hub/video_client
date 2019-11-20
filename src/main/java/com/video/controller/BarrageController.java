@@ -1,6 +1,7 @@
 package com.video.controller;
 
 import com.video.domain.Barrage;
+import com.video.domain.Video;
 import com.video.service.BarrageService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +19,8 @@ public class BarrageController {
 
 
     @RequestMapping("/saveBarrage")
-    public Barrage save(@RequestBody Barrage barrage){
-        return barrageService.save(barrage);
+    public Barrage save(@RequestBody Barrage barrage,@RequestBody Video video){
+        return barrageService.save(barrage,video);
     }
 
     /*

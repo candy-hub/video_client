@@ -100,4 +100,28 @@ public class VideoController {
     public List<Video> findVideoById(@PathVariable("userId")Integer id){
         return videoService.findVideoById(id);
     }
+
+
+    /*
+    *最新动态，按类别存redis，调用findall即删除redis，刷新及调用findall，展示最新的8个，每5秒发送获取最新动态数量的事件
+    */
+    @RequestMapping("/findByTrend/{typeId}")
+    public List<Video> findByTrend(@PathVariable int typeId){
+        return videoService.findByTrend(typeId);
+    }
+
+    //获得最新动态数量  每5秒请求一次
+    @RequestMapping("/findByTrend/{typeId}")
+    public int findTrendCount(@PathVariable int typeId){
+        return videoService.findTrendCount(typeId);
+    }
+
+    /*
+    *最新投稿
+    */
+
+    @RequestMapping("/findByLatest/{typeId}")
+    public List<Video> findByLatest(@PathVariable int typeId){
+        return videoService.findByLatest(typeId);
+    }
 }
