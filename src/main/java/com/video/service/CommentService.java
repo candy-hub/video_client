@@ -3,6 +3,7 @@ package com.video.service;
 
 import com.video.domain.Comment;
 import com.video.domain.Video;
+import com.video.response.CommentVideo;
 import com.video.response.Comments;
 import com.video.response.Pagination;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,7 @@ public interface CommentService {
 
 //    List<Comment> findAll2(Integer commentId);
 
-    Comment save(Comment comment,Video video);
+    Comment save(CommentVideo commentVideo);
 
     String delete(int commentId);
 
