@@ -208,6 +208,14 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "updateStatue/{userId}",method = RequestMethod.GET)
+    public User updateStatue(@PathVariable("userId")Integer userId){
+        User user = userService.findByUserId(userId);
+        user.setUserStatue(2);
+        User update = userService.update(user);
+        return update;
+    }
+
     /*
      * 管理人员界面
      */
