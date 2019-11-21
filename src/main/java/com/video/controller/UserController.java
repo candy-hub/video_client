@@ -213,9 +213,9 @@ public class UserController {
      */
 
     /*用户信息展示*/
-    @RequestMapping(value = "findAllUser",method = RequestMethod.POST)
-    public List<User> findAllUser(){
-        return userService.findAllUser();
+    @RequestMapping(value = "/findAllUser/{page}/{size}",method = RequestMethod.GET)
+    public List<User> findAllUser(@PathVariable("page")Integer page,@PathVariable("size")Integer size){
+        return userService.findAllUser(page,size);
     }
 
     /*修改用户状态*/

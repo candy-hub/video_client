@@ -59,7 +59,7 @@ public interface UserService {
     /*
      * 管理人员界面
      */
-    List<User> findAllUser();//用户信息展示
+    List<User> findAllUser(Integer page, Integer size);//用户信息展示
 
     void updateUserStatue(Integer userId);//修改用户的状态码
 

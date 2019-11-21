@@ -124,4 +124,17 @@ public class VideoController {
     public List<Video> findByLatest(@PathVariable int typeId){
         return videoService.findByLatest(typeId);
     }
+
+    //特别推荐排行
+    @RequestMapping("/findAllVideo")
+    public List<Video> findAllVideo(){
+        return videoService.findAllVideo();
+    }
+
+    // 娱乐排行
+    @RequestMapping("/findFunById/{typeId}")
+    public List<Video> findFunById(@PathVariable int typeId){
+        return videoService.findFunById(typeId);
+    }
+
 }

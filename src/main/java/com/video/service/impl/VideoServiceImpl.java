@@ -376,6 +376,19 @@ public class VideoServiceImpl implements VideoService{
         }
         return all;
     }
+
+    @Override
+    public List<Video> findAllVideo() {
+        List<Video> list = videoRepository.findAllByOrderByVideoLikeDesc();
+        List<Video> videos = list.subList(0, 8);
+        return videos;
+    }
+
+    @Override
+    public List<Video> findFunById(Integer typeId) {
+       // return videoRepository.findAllByTypeIdOrderByTypeIdDesc(typeId);
+      return null;
+    }
 }
 
 
