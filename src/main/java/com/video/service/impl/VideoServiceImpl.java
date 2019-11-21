@@ -209,7 +209,7 @@ public class VideoServiceImpl implements VideoService{
         searchRequest.types("doc");
         //搜索源构建对象
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.size(100);
+        searchSourceBuilder.size(130);
         if(searchName.equals("null")){
             searchSourceBuilder.query(QueryBuilders.matchAllQuery());
             searchRequest.source(searchSourceBuilder);
