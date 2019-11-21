@@ -379,8 +379,14 @@ public class VideoServiceImpl implements VideoService{
 
     @Override
     public List<Video> findFunById(Integer typeId) {
-       // return videoRepository.findAllByTypeIdOrderByTypeIdDesc(typeId);
-      return null;
+        List<Video> list = videoRepository.findAllByTypeId(typeId);
+        list.sort(new Comparator<Video>() {
+            @Override
+            public int compare(Video o1, Video o2) {
+                return o2.getVideoLike()-o1.getVideoLike();
+            }
+        });
+        return list;
     }
 }
 
