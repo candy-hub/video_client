@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
 
     /*用户信息展示*/
     @Override
-    public List<User> findAllUser() {
+    public List<User> findAllUser(Integer page, Integer size) {
         return userRepository.findAll();
     }
 
