@@ -4,6 +4,7 @@ package com.video.service.impl;
 import com.video.dao.CommentRepository;
 import com.video.domain.Comment;
 import com.video.domain.Video;
+import com.video.response.CommentVideo;
 import com.video.response.Comments;
 import com.video.response.Pagination;
 import com.video.service.CommentService;
@@ -72,7 +73,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment save(Comment comment,Video video) {
+    public Comment save(CommentVideo commentVideo) {
+        Comment comment=commentVideo.getComment();
+        Video video=commentVideo.getVideo();
         comment.setCommentTime(new Date());
         comment.setCommentStatue(0);
         if (comment!=null){

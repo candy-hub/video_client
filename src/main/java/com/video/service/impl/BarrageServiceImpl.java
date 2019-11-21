@@ -3,6 +3,7 @@ package com.video.service.impl;
 import com.video.dao.BarrageRepository;
 import com.video.domain.Barrage;
 import com.video.domain.Video;
+import com.video.response.CommentVideo;
 import com.video.service.BarrageService;
 import com.video.utils.SpringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,7 +26,9 @@ public class BarrageServiceImpl implements BarrageService {
     private BarrageRepository barrageRepository;
 
     @Override
-    public Barrage save(Barrage barrage, Video video) {
+    public Barrage save(CommentVideo commentVideo) {
+        Barrage barrage=commentVideo.getBarrage();
+        Video video=commentVideo.getVideo();
         Barrage save = barrageRepository.save(barrage);
 
         //存最新动态

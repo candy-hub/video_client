@@ -3,6 +3,7 @@ package com.video.controller;
 import com.video.domain.Barrage;
 import com.video.domain.Comment;
 import com.video.domain.Video;
+import com.video.response.CommentVideo;
 import com.video.response.Comments;
 import com.video.response.Pagination;
 import com.video.service.CommentService;
@@ -40,8 +41,9 @@ public class CommentController {
 
     /*存库*/
     @RequestMapping("/saveComment")
-    public Comment save(@RequestBody Comment comment, @RequestBody Video video){
-        return commentService.save(comment,video);
+    public Comment save(@RequestBody CommentVideo commentVideo){
+        System.out.println(commentVideo);
+        return commentService.save(commentVideo);
     }
 
     /*用户本人删除*/
