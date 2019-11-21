@@ -49,4 +49,8 @@ public interface VideoService {
     int findTrendCount(int typeId);
 
     List<Video> findByLatest(int typeId);
+
+    public List<Video> findAllVideo();
+
+    public List<Video> findFunById(Integer typeId);
 }
