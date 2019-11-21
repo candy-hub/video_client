@@ -135,24 +135,14 @@ public class UserServiceImpl implements UserService {
     }
 
     /*用户历史记录*/
-
-
-
-    @Override
-    public Record insertRecord(Record record) {
-        return recordRepository.save(record);
-    }
-
-
-
     @Override
     public List<Record> findRecordByUserIdAndVideoId(Integer userId, Integer videoId) {
         return recordRepository.findAllByUserIdAndVideoId(userId,videoId);
     }
 
     @Override
-    public Record updateRecord(Record record) {
-        return recordRepository.saveAndFlush(record);
+    public Record ChangeRecord(Record record) {
+        return recordRepository.save(record);
     }
 
     @Override
@@ -185,13 +175,6 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    /*重置用户密码*/
-    @Override
-    public void resetPassword(Integer userId) {
-        User user = userRepository.findById(userId).get();
-        user.setUserPassword("123456");
-        userRepository.saveAndFlush(user);
-    }
 
     /*修改用户状态*/
     @Override
