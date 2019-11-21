@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="table-responsive">
+    <a href="/export"><button type="button" class="btn btn-primary">导出</button></a>
+    <form class="form-horizontal" id="form_table" action="/importData" enctype="multipart/form-data" method="post">
+        <br/>
+        <br/>
+        <button type="submit" class="btn btn-primary">导入</button>
+        <input class="form-input" type="file" name="filename"></input>
+    </form>
+</div>
+</body>
+</html>

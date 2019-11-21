@@ -8,10 +8,13 @@ import com.video.service.UserService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -81,6 +84,7 @@ public class UserController {
     /*头像上传*/
     @RequestMapping(value = "/upload",method = RequestMethod.POST)
     public String upload(MultipartFile file){
+
         if (Objects.isNull(file) || file.isEmpty()) {
             return "fail";
         }else {
@@ -111,11 +115,11 @@ public class UserController {
         if (all!=null){
             Record record2 = all.get(0);
             record2.setVideoTime(record.getVideoTime());
-            Record record1 = userService.updateRecord(record2);
+            Record record1 = userService.ChangeRecord(record2);
             redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record1);
             return record1;
         }else{
-            Record record2 = userService.insertRecord(record);
+            Record record2 = userService.ChangeRecord(record);
             redisTemplate.opsForHash().put("user"+record.getUserId(), "video"+record.getVideoId(), record2);
             return record2 ;
         }
@@ -207,13 +211,6 @@ public class UserController {
     @RequestMapping(value = "findAllUser",method = RequestMethod.POST)
     public List<User> findAllUser(){
         return userService.findAllUser();
-    }
-
-    /*重置用户密码*/
-    @RequestMapping(value = "/resetPassword",method = RequestMethod.GET)
-    public String resetPassword(@RequestParam Integer userId){
-        userService.resetPassword(userId);
-        return "重置成功";
     }
 
     /*修改用户状态*/
