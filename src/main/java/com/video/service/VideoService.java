@@ -50,7 +50,9 @@ public interface VideoService {
 
     List<Video> findByLatest(int typeId);
 
-    public List<Video> findAllVideo();
+    List<Video> findAllVideo();
 
     public List<Video> findFunById(Integer typeId);
+
+    Pagination findAllVideos(int page, int size);
 }

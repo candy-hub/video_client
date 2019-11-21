@@ -137,4 +137,9 @@ public class VideoController {
         return videoService.findFunById(typeId);
     }
 
+    @RequestMapping("/findAllVideo/{page}/{size}")
+    public Pagination findAllVideo(@PathVariable("page")Integer page,@PathVariable("size")Integer size){
+        return videoService.findAllVideos(page,size);
+    }
+
 }

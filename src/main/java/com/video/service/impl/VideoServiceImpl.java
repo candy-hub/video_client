@@ -396,6 +396,16 @@ public class VideoServiceImpl implements VideoService{
         });
         return list;
     }
+
+    @Override
+    public Pagination findAllVideos(int page, int size) {
+        PageRequest of = PageRequest.of(page - 1, size);
+        Page<Video> all = videoRepository.findAllVideos(of);
+        Pagination<Video> pagination=new Pagination<>();
+        pagination.setList(all.getContent());
+        pagination.setTotal(all.getTotalElements());
+        return pagination;
+    }
 }
 
 

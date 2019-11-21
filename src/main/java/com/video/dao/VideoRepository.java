@@ -26,4 +26,6 @@ public interface VideoRepository extends JpaRepository<Video,Integer> {
 
     List<Video> findAllByTypeIdOrderByVideoLikeDesc(Integer typeId);
 
+    Page<Video> findAllVideos(Pageable pages);
+
 }
