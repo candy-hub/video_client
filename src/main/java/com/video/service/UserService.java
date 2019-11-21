@@ -37,14 +37,11 @@ public interface UserService {
 
     User findAllByUserRechargeVipOrderNumber(String userRechargeVipOrderNumber);//通过VIP订单编号查对象
 
-    //新增用户的历史记录
-    Record insertRecord(Record record);
+    //改变用户的历史记录
+    Record ChangeRecord(Record record);
 
     //通过userId和videoId查看一条历史记录
     List<Record> findRecordByUserIdAndVideoId(Integer userId,Integer videoId);
-
-    //修改用户的观看时间
-    Record updateRecord(Record record);
 
     //通过RecordId查一条历史记录
     Record findAllRecord(Integer recordId);
@@ -63,8 +60,6 @@ public interface UserService {
      * 管理人员界面
      */
     List<User> findAllUser();//用户信息展示
-
-    void resetPassword(Integer userId);//重置用户密码
 
     void updateUserStatue(Integer userId);//修改用户的状态码
 
