@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
             return "用户名不存在";
         }else if (all.size()==1) {
             String pass= md5Utils.getPassword(all.get(0).getUserName(), loginResponse.getPassword());
-            if (all.get(0).getUserStatue()==1){
+            if (all.get(0).getUserStatue()==1||all.get(0).getUserStatue()==2){
                 if (all.get(0).getUserPassword().equals(pass)) {
                     return "success";
                 }
@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Record ChangeRecord(Record record) {
+    public Record insertRecord(Record record) {
         return recordRepository.save(record);
     }
 
@@ -148,6 +148,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Record> findRecordByUserIdAndVideoId(Integer userId, Integer videoId) {
         return recordRepository.findAllByUserIdAndVideoId(userId,videoId);
+    }
+
+    @Override
+    public Record updateRecord(Record record) {
+        return recordRepository.saveAndFlush(record);
     }
 
     @Override
@@ -180,6 +185,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
+    /*重置用户密码*/
+    @Override
+    public void resetPassword(Integer userId) {
+        User user = userRepository.findById(userId).get();
+        user.setUserPassword("123456");
+        userRepository.saveAndFlush(user);
+    }
+
     /*修改用户状态*/
     @Override
     public void updateUserStatue(Integer userId) {
@@ -188,7 +201,21 @@ public class UserServiceImpl implements UserService {
         userRepository.saveAndFlush(user);
     }
 
+    @Override
+    public String checkCode(String code,String tel) {
+        User user = userRepository.findAllByUserTell(tel);
+        String userCode = user.getUserCode();
+        if(code.equals(userCode)){
+            return "1";
+        }else{
+            return "0";
+        }
 
+    }
 
-
+    @Override
+    public User findUserByTel(String tel) {
+        User user = userRepository.findAllByUserTell(tel);
+        return user;
+    }
 }

@@ -133,7 +133,7 @@ public class BarrageWebSocketController {
                     toSession.getAsyncRemote().sendText(new Gson().toJson(m));
                 } else {
                     //发送给发送者.
-                    fromSession.getAsyncRemote().sendText("系统消息：对方不在线或者您输入的频道号不对");
+                    fromSession.getAsyncRemote().sendText("系统消息：对方不在线");
                 }
             }
 

@@ -6,10 +6,7 @@ import com.video.domain.Collection;
 import com.video.domain.Video;
 import com.video.response.Pagination;
 import com.video.service.VideoService;
-import com.video.utils.EsUtils;
-import com.video.utils.OssDownloadUtils;
-import com.video.utils.OssUploadUtils;
-import com.video.utils.QiniuUploadUtils;
+import com.video.utils.*;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -26,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -68,6 +66,8 @@ public class VideoServiceImpl implements VideoService{
     private CollectionRepository collectionRepository;
 
     private static String objectName;
+
+    private RedisTemplate redisTemplate = SpringUtils.getBean("redisTemplates");
 
 
     @Override
@@ -150,24 +150,29 @@ public class VideoServiceImpl implements VideoService{
     }
 
     @Override
-    public String download(Video video) {
-        String name = video.getVideoObjectName();
-        try {
-            String s = ossDownloadUtils.downLoad(name);
-            if(s.equals(0)){
-                //失败返回0
-                return "0";
-            }else{
-                //获取当前视频的下载量
-                Integer videoDownload = video.getVideoDownload();
-                int i = videoDownload.intValue() + 1;
-                Integer down = Integer.valueOf(i);
-                video.setVideoDownload(down);
-                videoRepository.save(video);
-                return "1";
+    public String download(Integer id) {
+        Optional<Video> byId = videoRepository.findById(id);
+        if(byId!=null) {
+            Video video = byId.get();
+             String name = video.getVideoObjectName();
+            System.out.println("===========" + name);
+            try {
+                String s = ossDownloadUtils.downLoad(name);
+                if (s.equals(0)) {
+                    //失败返回0
+                    return "0";
+                } else {
+                    //获取当前视频的下载量
+                    Integer videoDownload = video.getVideoDownload();
+                    int i = videoDownload.intValue() + 1;
+                    Integer down = Integer.valueOf(i);
+                    video.setVideoDownload(down);
+                    videoRepository.save(video);
+                    return "1";
+                }
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
             }
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
         }
         return null;
     }
@@ -283,6 +288,86 @@ public class VideoServiceImpl implements VideoService{
     public List<Video> findVideoById(Integer id) {
         List<Video> list = videoRepository.findAllByUserId(id);
         return list;
+    }
+
+    @Override
+    public List<Video> findByTrend(int typeId) {
+        Map entries = redisTemplate.opsForHash().entries(typeId + "动态");
+
+        List<Video> videos = new LinkedList<Video>();
+        if (entries.size() > 0) {
+            /*把map中值遍历存入集合中*/
+            java.util.Collection<Object> values = entries.values();
+            Iterator<Object> iterator = values.iterator();
+            while (iterator.hasNext()) {
+                videos.add((Video) iterator.next());
+            }
+            videos.sort(new Comparator<Video>() {
+                @Override
+                public int compare(Video o1, Video o2) {
+                    return o2.getVideoUptime().compareTo(o1.getVideoUptime());
+                }
+            });
+            redisTemplate.opsForHash().delete(typeId + "动态");
+            if (videos.size()>8){
+                return videos.subList(0,8);
+            }else{
+                List<Video> all = videoRepository.findAllByTypeId(typeId);
+                all.sort(new Comparator<Video>() {
+                    @Override
+                    public int compare(Video o1, Video o2) {
+                        return o2.getVideoFavorite()-o1.getVideoFavorite();
+                    }
+                });
+                for (Video v:all) {
+                    for (Video video : videos) {
+                        if (v.getVideoId()!=video.getVideoId()){
+                            videos.add(v);
+                            if (videos.size()==8){
+                                return videos;
+                            }
+                        }
+                    }
+                }
+//                System.out.println(videos);
+                return videos;
+            }
+
+        } else {
+            //按收藏量
+            List<Video> all = videoRepository.findAllByTypeId(typeId);
+            all.sort(new Comparator<Video>() {
+                @Override
+                public int compare(Video o1, Video o2) {
+                    return o2.getVideoFavorite()-o1.getVideoFavorite();
+                }
+            });
+            if (all.size()>8){
+                return all.subList(0,8);
+            }
+            return all;
+        }
+    }
+
+    @Override
+    public int findTrendCount(int typeId) {
+        Map entries = redisTemplate.opsForHash().entries(typeId + "动态");
+        return entries.size();
+    }
+
+    @Override
+    public List<Video> findByLatest(int typeId) {
+        List<Video> all = videoRepository.findAllByTypeId(typeId);
+        all.sort(new Comparator<Video>() {
+            @Override
+            public int compare(Video o1, Video o2) {
+                return o2.getVideoUptime().compareTo(o1.getVideoUptime());
+            }
+        });
+        if (all.size()>8){
+            return all.subList(0,8);
+        }
+        return all;
     }
 }
 

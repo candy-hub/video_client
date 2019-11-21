@@ -3,9 +3,11 @@ package com.video.service.impl;
 //import com.video.dao.CommentDao;
 import com.video.dao.CommentRepository;
 import com.video.domain.Comment;
+import com.video.domain.Video;
 import com.video.response.Comments;
 import com.video.response.Pagination;
 import com.video.service.CommentService;
+import com.video.utils.SpringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,44 +26,16 @@ public class CommentServiceImpl implements CommentService {
     @Resource
     private CommentRepository commentRepository;
 
-    /*@Resource
-    private CommentDao commentDao;*/
+    private RedisTemplate redisTemplate = SpringUtils.getBean("redisTemplates");
 
-    @Resource
-    private RedisTemplate redisTemplate;
 
-   /* @Override
-    public List<Comment> findAll() {
-
-        List<Comment> all = commentRepository.findAll();
-
-        List<Comment> list=new ArrayList<>();
-
-        if (all!=null){
-            for (Comment comment:all){
-                if (comment.getCommentRid()==0){
-                    list.add(comment);
-                    System.out.println(comment);
-                    for (Comment com:all) {
-                        if (comment.getCommentId() == com.getCommentRid() && comment.getCommentId()!=com.getCommentId()) {
-                            System.out.println(com);
-                            list.add(com);
-                        }
-                    }
-                }
-            }
-            return list;
-        }else {
-            return null;
-        }
-    }*/
 
     /*主楼*/
     @Override
     public Comments selectAll(int videoId, int page, int size) {
         Comments comments=new Comments();
         int commentRid=0;
-        Pageable pages=PageRequest.of(0,10);
+        Pageable pages=PageRequest.of(page-1,size);
         List<Pagination> list=new ArrayList<>();
         Pagination pag=new Pagination();
         Page<Comment> all = commentRepository.findAllByCommentRidAndVideoId(commentRid,videoId, pages);
@@ -97,22 +71,19 @@ public class CommentServiceImpl implements CommentService {
         return all;
     }
 
-    /*@Override
-    public List<Comment> findAll() {
-        return commentDao.findAllByRid();
-    }
-
     @Override
-    public List<Comment> findAll2() {
-        return commentDao.findAllByRid2();
-    }*/
-
-    @Override
-    public Comment save(Comment comment) {
+    public Comment save(Comment comment,Video video) {
         comment.setCommentTime(new Date());
         comment.setCommentStatue(0);
         if (comment!=null){
-            return commentRepository.save(comment);
+            Comment save = commentRepository.save(comment);
+
+            //存最新动态
+            video.setVideoUptime(new Date());
+            redisTemplate.opsForHash().put(video.getTypeId()+"动态",video.getVideoId()+"视频",video);
+            return save;
+//            存最新动态
+
         }else {
             return null;
         }

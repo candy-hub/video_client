@@ -63,4 +63,8 @@ public interface UserService {
 
     void updateUserStatue(Integer userId);//修改用户的状态码
 
+    public String checkCode(String code,String tel);
+
+    public User findUserByTel(String tel);
+
 }
