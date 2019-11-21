@@ -294,7 +294,8 @@ public class VideoServiceImpl implements VideoService{
     public List<Video> findByTrend(int typeId) {
 
         if (typeId==0){
-            return videoRepository.findAllByTypeId(0);
+            List<Video> desc = videoRepository.findAllByOrderByVideoLikeDesc();
+            return desc.subList(0,8);
         }
 
         Map entries = redisTemplate.opsForHash().entries(typeId + "动态");
