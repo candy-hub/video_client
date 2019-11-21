@@ -3,6 +3,7 @@ package com.video.service.impl;
 //import com.video.dao.CommentDao;
 import com.video.dao.CommentRepository;
 import com.video.domain.Comment;
+import com.video.domain.User;
 import com.video.domain.Video;
 import com.video.response.CommentVideo;
 import com.video.response.Comments;
@@ -115,8 +116,8 @@ public class CommentServiceImpl implements CommentService {
     }*/
 
     @Override
-    public List<Comment> findAllByStatue(int commentStatue) {
-        return commentRepository.findAllByCommentStatue(commentStatue);
+    public List<Comment> findAllByComment(Integer page,Integer size) {
+        return commentRepository.findAll();
     }
 
 
@@ -127,7 +128,9 @@ public class CommentServiceImpl implements CommentService {
     }*/
 
     @Override
-    public Comment updateStatue(Comment comment) {
-        return commentRepository.save(comment);
+    public void updateStatue(Integer commentId) {
+        Comment comment = commentRepository.findAllByCommentId(commentId).get(0);
+        comment.setCommentStatue(1);
+        commentRepository.saveAndFlush(comment);
     }
 }

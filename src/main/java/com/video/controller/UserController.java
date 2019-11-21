@@ -219,8 +219,8 @@ public class UserController {
     }
 
     /*修改用户状态*/
-    @RequestMapping(value = "/updateUserStatue",method = RequestMethod.GET)
-    public String updateUserStatue(@RequestParam Integer userId){
+    @RequestMapping(value = "/updateUserStatue/{userId}",method = RequestMethod.GET)
+    public String updateUserStatue(@PathVariable("userId") Integer userId){
         userService.updateUserStatue(userId);
         return "修改成功";
     }

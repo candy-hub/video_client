@@ -180,7 +180,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserStatue(Integer userId) {
         User user = userRepository.findById(userId).get();
-        user.setUserStatue(1);
+        user.setUserStatue(2);
         userRepository.saveAndFlush(user);
     }
 
