@@ -311,8 +311,28 @@ public class VideoServiceImpl implements VideoService{
             redisTemplate.opsForHash().delete(typeId + "动态");
             if (videos.size()>8){
                 return videos.subList(0,8);
+            }else{
+                List<Video> all = videoRepository.findAllByTypeId(typeId);
+                all.sort(new Comparator<Video>() {
+                    @Override
+                    public int compare(Video o1, Video o2) {
+                        return o2.getVideoFavorite()-o1.getVideoFavorite();
+                    }
+                });
+                for (Video v:all) {
+                    for (Video video : videos) {
+                        if (v.getVideoId()!=video.getVideoId()){
+                            videos.add(v);
+                            if (videos.size()==8){
+                                return videos;
+                            }
+                        }
+                    }
+                }
+//                System.out.println(videos);
+                return videos;
             }
-            return videos;
+
         } else {
             //按收藏量
             List<Video> all = videoRepository.findAllByTypeId(typeId);

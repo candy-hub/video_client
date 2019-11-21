@@ -111,7 +111,7 @@ public class VideoController {
     }
 
     //获得最新动态数量  每5秒请求一次
-    @RequestMapping("/findByTrend/{typeId}")
+    @RequestMapping("/findTrendCount/{typeId}")
     public int findTrendCount(@PathVariable int typeId){
         return videoService.findTrendCount(typeId);
     }
