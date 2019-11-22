@@ -294,8 +294,9 @@ public class VideoServiceImpl implements VideoService{
     public List<Video> findByTrend(int typeId) {
         Map entries = redisTemplate.opsForHash().entries(typeId + "动态");
 
-        List<Video> videos = new LinkedList<Video>();
+
         if (entries.size() > 0) {
+            List<Video> videos = new LinkedList<Video>();
             /*把map中值遍历存入集合中*/
             java.util.Collection<Object> values = entries.values();
             Iterator<Object> iterator = values.iterator();
@@ -308,8 +309,9 @@ public class VideoServiceImpl implements VideoService{
                     return o2.getVideoUptime().compareTo(o1.getVideoUptime());
                 }
             });
-            redisTemplate.opsForHash().delete(typeId + "动态");
-            if (videos.size()>8){
+
+            if (videos.size()>=8){
+                redisTemplate.delete(typeId + "动态");
                 return videos.subList(0,8);
             }else{
                 List<Video> all = videoRepository.findAllByTypeId(typeId);
@@ -319,18 +321,24 @@ public class VideoServiceImpl implements VideoService{
                         return o2.getVideoFavorite()-o1.getVideoFavorite();
                     }
                 });
-                for (Video v:all) {
-                    for (Video video : videos) {
+//                System.out.println(videos);
+                List<Video> list=new ArrayList<>();
+//                list.add(videos.get(0));
+                for (Video video : videos) {
+                    list.add(video);
+                    for (Video v:all) {
                         if (v.getVideoId()!=video.getVideoId()){
-                            videos.add(v);
-                            if (videos.size()==8){
-                                return videos;
+                            list.add(v);
+                            if (list.size()==8){
+//                                redisTemplate.delete(typeId + "动态");
+//                                System.out.println(list);
+                                return list;
                             }
                         }
                     }
                 }
 //                System.out.println(videos);
-                return videos;
+                return list;
             }
 
         } else {
