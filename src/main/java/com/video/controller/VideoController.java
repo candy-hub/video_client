@@ -128,7 +128,9 @@ public class VideoController {
     //特别推荐排行
     @RequestMapping("/findAllVideo")
     public List<Video> findAllVideo(){
-        return videoService.findAllVideo();
+        List<Video> allVideo = videoService.findAllVideo();
+        //System.out.println(allVideo);
+        return allVideo;
     }
 
     // 娱乐排行
