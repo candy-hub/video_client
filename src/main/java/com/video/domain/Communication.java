@@ -23,8 +23,8 @@ public class Communication {
     @Column(name = "idx_user_name")
     private Integer userName; //发消息用户姓名
 
-    @Column(name = "idx_user_pic")
-    private String userPic;//用户头像
+  /*  @Column(name = "idx_user_pic")
+    private String userPic;//用户头像*/
 
     @Column(name = "idx_receive_id")
     private Integer userRid;  //接收消息的用户id
@@ -32,11 +32,11 @@ public class Communication {
     @Column(name = "idx_receive_name")
     private Integer userRname; //接收消息的用户姓名
 
-    @Column(name = "idx_receive_pic")
+   /* @Column(name = "idx_receive_pic")
     private String userRpic;//用户头像
 
     @Column(name = "idx_user_message")
-    private String message; //发送的消息
+    private String message; //发送的消息*/
 
     @Column(name = "idx_communication_time")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

@@ -2,6 +2,7 @@ package com.video.service.impl;
 
 //import com.video.dao.CommentDao;
 import com.video.dao.CommentRepository;
+import com.video.dao.VideoRepository;
 import com.video.domain.Comment;
 import com.video.domain.User;
 import com.video.domain.Video;
@@ -30,7 +31,8 @@ public class CommentServiceImpl implements CommentService {
 
     private RedisTemplate redisTemplate = SpringUtils.getBean("redisTemplates");
 
-
+    @Resource
+    private VideoRepository videoRepository;
 
     /*主楼*/
     @Override
@@ -81,7 +83,8 @@ public class CommentServiceImpl implements CommentService {
         comment.setCommentStatue(0);
         if (comment!=null){
             Comment save = commentRepository.save(comment);
-
+            video.setVideoComment(video.getVideoComment()+1);
+            videoRepository.save(video);
             //存最新动态
             video.setVideoUptime(new Date());
             redisTemplate.opsForHash().put(video.getTypeId()+"动态",video.getVideoId()+"视频",video);
