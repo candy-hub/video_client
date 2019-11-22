@@ -53,4 +53,6 @@ public interface VideoService {
     public List<Video> findAllVideo();
 
     public List<Video> findFunById(Integer typeId);
+
+    public int findTotalLike(Integer typeId);
 }

@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -28,6 +29,12 @@ public class TypeServiceImpl implements TypeService{
     @Override
     public List<Type> findAllTypes() {
         List<Type> list = typeRepository.findAll();
+        list.sort(new Comparator<Type>() {
+            @Override
+            public int compare(Type o1, Type o2) {
+                return o1.getTypeId()-o2.getTypeId();
+            }
+        });
         return list;
     }
 

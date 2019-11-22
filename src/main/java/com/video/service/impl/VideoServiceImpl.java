@@ -388,6 +388,19 @@ public class VideoServiceImpl implements VideoService{
         });
         return list;
     }
+
+    @Override
+    public int findTotalLike(Integer typeId) {
+        List<Video> list = videoRepository.findAllByTypeId(typeId);
+        int sum=0;
+        for(int i=0;i<list.size();i++){
+            Integer videoLike = list.get(i).getVideoLike();
+            int l = videoLike.intValue();
+            sum=sum+l;
+        }
+      // Integer like = Integer.valueOf(sum);
+        return sum;
+    }
 }
 
 
