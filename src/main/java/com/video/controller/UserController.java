@@ -118,7 +118,7 @@ public class UserController {
     public Record addRecord(@RequestBody Record record){
         List<Record> all = userService.findRecordByUserIdAndVideoId(record.getUserId(), record.getVideoId());
         System.out.println(all);
-        if (all!=null){
+        if (all.size()!=0){
             Record record2 = all.get(0);
             record2.setVideoTime(record.getVideoTime());
             Record record1 = userService.ChangeRecord(record2);
