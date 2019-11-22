@@ -400,11 +400,18 @@ public class VideoServiceImpl implements VideoService{
     @Override
     public Pagination findAllVideos(int page, int size) {
         PageRequest of = PageRequest.of(page - 1, size);
-        Page<Video> all = videoRepository.findAllVideos(of);
+        Page<Video> all = videoRepository.findAll(of);
         Pagination<Video> pagination=new Pagination<>();
         pagination.setList(all.getContent());
         pagination.setTotal(all.getTotalElements());
         return pagination;
+    }
+
+    @Override
+    public void updateVideo(Integer videoId) {
+        Video video = videoRepository.findById(videoId).get();
+        video.setVideoStatue(1);
+        videoRepository.saveAndFlush(video);
     }
 }
 

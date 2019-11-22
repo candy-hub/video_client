@@ -55,4 +55,6 @@ public interface VideoService {
     public List<Video> findFunById(Integer typeId);
 
     Pagination findAllVideos(int page, int size);
+
+    void updateVideo(Integer videoId);
 }

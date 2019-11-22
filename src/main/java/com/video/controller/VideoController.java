@@ -142,4 +142,10 @@ public class VideoController {
         return videoService.findAllVideos(page,size);
     }
 
+    @RequestMapping("/updateVideoStatue/{videoId}")
+    public String updateVideoStatue(@PathVariable("videoId")Integer videoId){
+        videoService.updateVideo(videoId);
+        return "success";
+    }
+
 }
