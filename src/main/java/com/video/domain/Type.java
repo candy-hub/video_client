@@ -20,4 +20,18 @@ public class Type {
     @Column(name = "idx_type_info")
     private String typeInfo;//类别信息
 
+    @Column(name = "idx_type_like")
+    private Integer typeLike;//类别总点赞量
+
+    @Column(name = "idx_type_favorite")
+    private Integer typeFavorite;//类别总收藏量
+
+    @Column(name = "idx_type_download")
+    private Integer typeDownload;//类别总下载量
+
+    @Column(name = "idx_type_comment")
+    private Integer typeComment;//类别总评论量
+
+
+
 }
