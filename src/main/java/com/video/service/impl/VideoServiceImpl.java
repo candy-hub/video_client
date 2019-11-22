@@ -292,12 +292,6 @@ public class VideoServiceImpl implements VideoService{
 
     @Override
     public List<Video> findByTrend(int typeId) {
-
-        if (typeId==0){
-            List<Video> desc = videoRepository.findAllByOrderByVideoLikeDesc();
-            return desc.subList(0,8);
-        }
-
         Map entries = redisTemplate.opsForHash().entries(typeId + "动态");
 
         List<Video> videos = new LinkedList<Video>();
@@ -314,11 +308,10 @@ public class VideoServiceImpl implements VideoService{
                     return o2.getVideoUptime().compareTo(o1.getVideoUptime());
                 }
             });
-
-            if (videos.size()>=8){
-                redisTemplate.delete(typeId + "动态");
+            redisTemplate.opsForHash().delete(typeId + "动态");
+            if (videos.size()>8){
                 return videos.subList(0,8);
-            }else {
+            }else{
                 List<Video> all = videoRepository.findAllByTypeId(typeId);
                 all.sort(new Comparator<Video>() {
                     @Override
@@ -326,14 +319,12 @@ public class VideoServiceImpl implements VideoService{
                         return o2.getVideoFavorite()-o1.getVideoFavorite();
                     }
                 });
-                List<Video> list=null;
-                list.addAll(videos);
                 for (Video v:all) {
                     for (Video video : videos) {
                         if (v.getVideoId()!=video.getVideoId()){
-                            list.add(v);
-                            if (list.size()==8){
-                                return list;
+                            videos.add(v);
+                            if (videos.size()==8){
+                                return videos;
                             }
                         }
                     }
@@ -341,6 +332,7 @@ public class VideoServiceImpl implements VideoService{
 //                System.out.println(videos);
                 return videos;
             }
+
         } else {
             //按收藏量
             List<Video> all = videoRepository.findAllByTypeId(typeId);
@@ -395,23 +387,6 @@ public class VideoServiceImpl implements VideoService{
             }
         });
         return list;
-    }
-
-    @Override
-    public Pagination findAllVideos(int page, int size) {
-        PageRequest of = PageRequest.of(page - 1, size);
-        Page<Video> all = videoRepository.findAll(of);
-        Pagination<Video> pagination=new Pagination<>();
-        pagination.setList(all.getContent());
-        pagination.setTotal(all.getTotalElements());
-        return pagination;
-    }
-
-    @Override
-    public void updateVideo(Integer videoId) {
-        Video video = videoRepository.findById(videoId).get();
-        video.setVideoStatue(1);
-        videoRepository.saveAndFlush(video);
     }
 }
 
