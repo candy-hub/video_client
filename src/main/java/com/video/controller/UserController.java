@@ -5,6 +5,7 @@ import com.video.domain.Record;
 import com.video.domain.User;
 import com.video.response.LoginResponse;
 import com.video.response.Pagination;
+import com.video.response.UserMsg;
 import com.video.service.UserService;
 import com.video.utils.EmailUtils;
 import com.video.utils.QiniuUploadUtils;
@@ -252,6 +253,5 @@ public class UserController {
     public User findUserByTel(@PathVariable("tel") String tel){
         return userService.findUserByTel(tel);
     }
-
 
 }
