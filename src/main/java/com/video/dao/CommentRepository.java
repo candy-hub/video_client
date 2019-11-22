@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment,Integer> {
 
-    List<Comment> findAllByCommentStatue(int commentStatue);
+
 
     Page<Comment> findAllByCommentIdAndVideoId(Integer commentId,Integer videoId, Pageable pageable);  //从楼查询
    //Page<Comment> findAllByCid(Pageable pageable,Integer commentId);
@@ -18,4 +18,8 @@ public interface CommentRepository extends JpaRepository<Comment,Integer> {
 
     Page<Comment> findAllByCommentRidAndVideoId(Integer commentRid,Integer videoId, Pageable pageable);  //主楼查询，固定rid=0
 
+    //后台评论管理
+    List<Comment> findAll();
+
+    List<Comment> findAllByCommentId(Integer commentId);
 }

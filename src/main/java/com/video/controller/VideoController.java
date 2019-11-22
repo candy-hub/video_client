@@ -137,11 +137,4 @@ public class VideoController {
         return videoService.findFunById(typeId);
     }
 
-    //echarts统计
-    @RequestMapping("/findTotalLike/{typeId}")
-    public int findTotalLike(@PathVariable int typeId){
-        System.out.println(typeId+"///////");
-        return videoService.findTotalLike(typeId);
-    }
-
 }

@@ -7,10 +7,7 @@ import com.video.response.CommentVideo;
 import com.video.response.Comments;
 import com.video.response.Pagination;
 import com.video.service.CommentService;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -68,16 +65,16 @@ public class CommentController {
      * 后台管理
      */
 
-    @RequestMapping("/findAllByStatue/{commentStatue}")   ////审核：分为被举报和正常
-    public List<Comment> findAllByStatue(@PathVariable int commentStatue){
+    @RequestMapping(value = "/findAllComment/{page}/{size}",method = RequestMethod.GET)   ////审核：分为被举报和正常
+    public List<Comment> findAllComment(@PathVariable("page") Integer page,@PathVariable("size")Integer size){
 
-        return commentService.findAllByStatue(commentStatue);
+        return commentService.findAllByComment(page,size);
     }
     /*举报  审核  修改*/
-    @RequestMapping("/updateComment")   //是否只被举报才审核
-    public Comment updateStatue(@RequestBody Comment comment){
-        return commentService.updateStatue(comment);
+    @RequestMapping(value = "/updateCommentStatue/{commentId}",method = RequestMethod.GET)   //是否只被举报才审核
+    public String updateStatue(@PathVariable("commentId") Integer commentId){
+        commentService.updateStatue(commentId);
+        return "修改成功";
     }
-
 
 }

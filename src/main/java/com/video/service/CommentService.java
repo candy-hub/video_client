@@ -28,9 +28,9 @@ public interface CommentService {
 
 //    Comment update(int commentId);
 
-    List<Comment> findAllByStatue(int commentStatue);
-
 //    Comment update(Comment comment);
 
-    Comment updateStatue(Comment comment);
+    List<Comment> findAllByComment(Integer page,Integer size);
+
+    public void updateStatue(Integer commentId);
 }
