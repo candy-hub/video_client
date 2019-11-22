@@ -28,9 +28,11 @@ public class CommunicationController {
 
     //私聊时把对方用户信息存储下来,过期时间为1小时
     @RequestMapping("/sendMessage")
-    public void findUserBy(@RequestBody Communication communication){
+    public Communication save(@RequestBody Communication communication){
         communication.setMsgTime(new Date());
+        Communication save = communicationService.save(communication);
         redisTemplate.opsForHash().put(communication.getUserRid()+"接收消息",communication.getUserId()+"发送消息",communication);
+        return save;
     }
 
     /*//查找与该用户进行过信息交互的某个用户
@@ -39,7 +41,7 @@ public class CommunicationController {
         return communicationService.findAll(userId,userRid);
     }*/
 
-    //查找与该用户进行过信息交互的某个用户
+    //查找与该用户进行过信息交互的所有用户
     @RequestMapping("/findMsg/{userId}")
     public List<Communication> findAll(@PathVariable("userId") Integer userId) {
         Map entries = redisTemplate.opsForHash().entries(userId + "接收消息");
@@ -60,6 +62,12 @@ public class CommunicationController {
             return communications;
         }
         return null;
+    }
+
+    @RequestMapping("/findMsgCount/{userId}")
+    public int findCount(@PathVariable("userId") Integer userId){
+        Map entries = redisTemplate.opsForHash().entries(userId + "接收消息");
+        return entries.size();
     }
 
     @RequestMapping("/deleteMsg/{userId}/{userRid}")
